@@ -30,18 +30,22 @@ namespace API_Proj.Features.Controllers
         public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
         {
             var offices = await _context.Office
-                    .Include(o => o.Employees)
-                    .Select(o => _mapper.Map<OfficeDTO>(o))
-                    .ToListAsync();
+                .Include(o => o.Employees)
+                .Select(o => _mapper.Map<OfficeDTO>(o))
+                .ToListAsync();
 
             return offices;
         }
 
         // GET: api/Offices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Office>> GetOffice(int id)
+        public async Task<ActionResult<OfficeDTO>> GetOffice(int id)
         {
-            var office = await _context.Office.FindAsync(id);
+            var office = await _context.Office
+                .Include(o => o.Employees)
+                .Where(o => o.OfficeID == id)
+                .Select(o => _mapper.Map<OfficeDTO>(o))
+                .SingleOrDefaultAsync();
 
             if (office == null)
             {
@@ -83,10 +87,32 @@ namespace API_Proj.Features.Controllers
         }
 
         // POST: api/Offices
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Office>> PostOffice(Office office)
+        [HttpPost("Create")]
+        public async Task<ActionResult<OfficeForCreationDTO>> CreateOffice(OfficeForCreationDTO Office)
         {
+
+            if (Office.EmployeesIDs.Count != 0)
+            {
+                var employees = new List<Employee>();
+                foreach (var id in Office.EmployeesIDs)
+                {
+                    var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+                    if (employee == null)
+                    {
+                        return NotFound("Employee not found");
+                    }
+                    else { employees.Add(employee); }
+                }
+
+            }
+            else
+            {
+                
+
+            }
+
+
+
             _context.Office.Add(office);
             await _context.SaveChangesAsync();
 

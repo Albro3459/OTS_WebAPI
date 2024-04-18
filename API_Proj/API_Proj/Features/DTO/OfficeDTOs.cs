@@ -17,4 +17,15 @@ namespace API_Proj.Features.DTO
         public List<int> EmployeesIDs { get; set; } = new List<int>();
 
     }
+
+    public class OfficeForCreationDTO
+    {
+        [Required]
+        public string OfficeName { get; set; } = string.Empty;
+
+        public int? RegionID { get; set; }
+
+        public List<int> EmployeesIDs { get; set; } = new List<int>();
+
+    }
 }

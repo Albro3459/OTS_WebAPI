@@ -9,6 +9,8 @@ using API_Proj.Domain.Entity;
 using API_Proj.Infastructure;
 using AutoMapper;
 using API_Proj.Features.DTO;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace API_Proj.Features.Controllers
 {
@@ -38,9 +40,12 @@ namespace API_Proj.Features.Controllers
 
         // GET: api/Laptops/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Laptop>> GetLaptop(int id)
+        public async Task<ActionResult<LaptopDTO>> GetLaptop(int id)
         {
-            var laptop = await _context.Laptop.FindAsync(id);
+            var laptop = await _context.Laptop
+                .Where(l => l.LaptopID == id)
+                .Select(l => _mapper.Map<LaptopDTO>(l))
+                .SingleOrDefaultAsync();
 
             if (laptop == null)
             {
@@ -81,15 +86,50 @@ namespace API_Proj.Features.Controllers
             return NoContent();
         }
 
-        // POST: api/Laptops
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Laptop>> PostLaptop(Laptop laptop)
+        // POST: api/Laptops/
+        [HttpPost("Create")]
+        public async Task<ActionResult<LaptopForCreationDTO>> CreateLaptop([FromBody] LaptopForCreationDTO Laptop)
         {
-            _context.Laptop.Add(laptop);
+
+            if (Laptop == null)
+            {
+                return BadRequest("Laptop invalid");
+            }
+
+            var laptopID = 1 + await _context.Laptop
+                    .OrderBy(l => l.LaptopID)
+                    .Select(l => l.LaptopID).FirstOrDefaultAsync();
+
+            var newLaptop = new Laptop();
+
+            if (Laptop.EmployeeID != null)
+            {
+                var employee = await _context.Employee.Where(e => e.EmployeeID == Laptop.EmployeeID).FirstOrDefaultAsync();
+                if (employee == null)
+                {
+                    return NotFound("Employee not found");
+                }
+
+                newLaptop = new Laptop() { LaptopID = laptopID, LaptopName = Laptop.LaptopName, EmployeeID = employee.EmployeeID, Employee = employee };
+
+                employee.Laptop = newLaptop;
+            }
+            else
+            {
+                newLaptop = new Laptop()
+                {
+                    LaptopID = laptopID,
+                    LaptopName = Laptop.LaptopName
+                };
+
+            }
+
+            _context.Laptop.Add(newLaptop);
+
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLaptop", new { id = laptop.LaptopID }, laptop);
+            return CreatedAtAction(nameof(GetLaptop), new { id = newLaptop.LaptopID }, newLaptop);
         }
 
         // DELETE: api/Laptops/5

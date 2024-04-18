@@ -15,4 +15,13 @@ namespace API_Proj.Features.DTO
         public int? EmployeeID { get; set; }
 
     }
+
+    public class LaptopForCreationDTO
+    {
+        [Required]
+        public string LaptopName { get; set; } = string.Empty;
+
+        public int? EmployeeID { get; set; }
+
+    }
 }
