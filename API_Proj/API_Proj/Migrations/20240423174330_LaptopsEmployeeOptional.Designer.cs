@@ -4,6 +4,7 @@ using API_Proj.Infastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Proj.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240423174330_LaptopsEmployeeOptional")]
+    partial class LaptopsEmployeeOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,22 +68,6 @@ namespace API_Proj.Migrations
                             EmployeeName = "Hoa Nguyen",
                             JobTitle = "Student Developer",
                             YearsAtCompany = 0.5
-                        },
-                        new
-                        {
-                            EmployeeID = 1003,
-                            CurrentProjects = "[\"Made to Test :(\"]",
-                            EmployeeName = "Mr. Test",
-                            JobTitle = "Tester",
-                            YearsAtCompany = 0.0
-                        },
-                        new
-                        {
-                            EmployeeID = 1004,
-                            CurrentProjects = "[\"Made to Test :(\"]",
-                            EmployeeName = "Ahhh Test",
-                            JobTitle = "Tester",
-                            YearsAtCompany = 0.0
                         });
                 });
 

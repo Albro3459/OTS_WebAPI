@@ -14,10 +14,9 @@ namespace API_Proj.Domain.Entity
         public string LaptopName { get; set; } = string.Empty;
 
         [ForeignKey("EmployeeID")]
-        [Required]
-        public int EmployeeID { get; set; }
+        public int? EmployeeID { get; set; }
 
-        public Employee Employee { get; set; } = null!;
+        public Employee? Employee { get; set; } = null!;
 
     }
 }

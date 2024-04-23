@@ -25,7 +25,7 @@ namespace API_Proj.Features.DTO
 
         public int? RegionID { get; set; }
 
-        public List<int> EmployeesIDs { get; set; } = new List<int>();
+        public List<int>? EmployeesIDs { get; set; } = new List<int>();
 
     }
 }

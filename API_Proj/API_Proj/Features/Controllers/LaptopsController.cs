@@ -88,48 +88,38 @@ namespace API_Proj.Features.Controllers
 
         // POST: api/Laptops/
         [HttpPost("Create")]
-        public async Task<ActionResult<LaptopForCreationDTO>> CreateLaptop([FromBody] LaptopForCreationDTO Laptop)
+        public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _Laptop)
         {
 
-            if (Laptop == null)
+            if (_Laptop == null)
             {
                 return BadRequest("Laptop invalid");
             }
 
-            var laptopID = 1 + await _context.Laptop
-                    .OrderBy(l => l.LaptopID)
-                    .Select(l => l.LaptopID).FirstOrDefaultAsync();
+            var Laptop = _mapper.Map<Laptop>(_Laptop);
 
-            var newLaptop = new Laptop();
-
-            if (Laptop.EmployeeID != null)
+            if (_Laptop.EmployeeID != null)
             {
-                var employee = await _context.Employee.Where(e => e.EmployeeID == Laptop.EmployeeID).FirstOrDefaultAsync();
+              
+                var employee = await _context.Employee.Where(e => e.EmployeeID == _Laptop.EmployeeID).FirstOrDefaultAsync();
                 if (employee == null)
                 {
                     return NotFound("Employee not found");
                 }
 
-                newLaptop = new Laptop() { LaptopID = laptopID, LaptopName = Laptop.LaptopName, EmployeeID = employee.EmployeeID, Employee = employee };
-
-                employee.Laptop = newLaptop;
-            }
-            else
-            {
-                newLaptop = new Laptop()
-                {
-                    LaptopID = laptopID,
-                    LaptopName = Laptop.LaptopName
-                };
-
+                employee.Laptop = Laptop;
             }
 
-            _context.Laptop.Add(newLaptop);
-
+            _context.Laptop.Add(Laptop);
 
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetLaptop), new { id = newLaptop.LaptopID }, newLaptop);
+            var laptopDTO = await _context.Laptop
+                .Where(l => l.LaptopID == Laptop.LaptopID)
+                .Select(l => _mapper.Map<LaptopDTO>(l))
+                .FirstOrDefaultAsync();
+
+            return laptopDTO;
         }
 
         // DELETE: api/Laptops/5

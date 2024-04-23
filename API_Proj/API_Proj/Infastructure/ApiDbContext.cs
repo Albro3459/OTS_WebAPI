@@ -51,6 +51,8 @@ namespace API_Proj.Infastructure
 
             modelBuilder.Entity<Employee>().HasData(new Employee { EmployeeID = 1001, EmployeeName = "Alex Brodsky", JobTitle = "Student Developer", YearsAtCompany = 0.5, CurrentProjects = new List<string>() { "Api Project" } });
             modelBuilder.Entity<Employee>().HasData(new Employee { EmployeeID = 1002, EmployeeName = "Hoa Nguyen", JobTitle = "Student Developer", YearsAtCompany = 0.5, CurrentProjects = new List<string>() { "Twidling Thumbs" } });
+            modelBuilder.Entity<Employee>().HasData(new Employee { EmployeeID = 1003, EmployeeName = "Mr. Test", JobTitle = "Tester", YearsAtCompany = 0, CurrentProjects = new List<string>() { "Made to Test :(" } });
+            modelBuilder.Entity<Employee>().HasData(new Employee { EmployeeID = 1004, EmployeeName = "Ahhh Test", JobTitle = "Tester", YearsAtCompany = 0, CurrentProjects = new List<string>() { "Made to Test :(" } });
 
 
             modelBuilder.Entity("OfficeEmployee").HasData(new { EmployeesID = 1001, OfficesID = 1001 },

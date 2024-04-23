@@ -10,8 +10,8 @@ public class Map: Profile
     public Map()
     {
 
-    // map to model from DTO
-    CreateMap<Region, RegionDTO>()
+        // map to model from DTO
+        CreateMap<Region, RegionDTO>()
             .ForMember(dto => dto.OfficesIDs,
                         opt => opt.MapFrom(model => model.Offices.Select(o => o.OfficeID).ToList()));
 
@@ -24,27 +24,28 @@ public class Map: Profile
                         opt => opt.MapFrom(model => model.Offices.Select(o => o.OfficeID).ToList()))
             .ForMember(dto => dto.LaptopID,
                         opt => opt.MapFrom(model => model.Laptop.LaptopID));
+
         CreateMap<Laptop, LaptopDTO>();
 
-        // map back from DTO to model
+        //// map back from CreationDTO to DTO
 
-        CreateMap<RegionDTO, Region>()
-            .ForMember(model => model.Offices,
-                        opt => opt.MapFrom(dto => dto.OfficesIDs.Select(o => new Office {
-                            OfficeID = o
-                        }).ToList()));
+        //CreateMap<RegionForCreationDTO, RegionDTO>();
 
-        //CreateMap<OfficeDTO, Office>()
-        //    .ForMember(dto => dto.EmployeesIDs,
-        //                opt => opt.MapFrom(model => model.Employees.Select(o => o.EmployeeID).ToList()));
+        //CreateMap<OfficeForCreationDTO, OfficeDTO>();
 
-        //CreateMap<EmployeeDTO, Employee>()
-        //    .ForMember(dto => dto.OfficesIDs,
-        //                opt => opt.MapFrom(model => model.Offices.Select(o => o.OfficeID).ToList()))
-        //    .ForMember(dto => dto.LaptopID,
-        //                opt => opt.MapFrom(model => model.Laptop.LaptopID));
+        //CreateMap<EmployeeForCreationDTO, EmployeeDTO>();
 
-        CreateMap<LaptopDTO, Laptop>();
+        //CreateMap<LaptopForCreationDTO, LaptopDTO>();
+
+        // map back from CreationDTO to Model
+
+        CreateMap<RegionForCreationDTO, Region>();
+
+        CreateMap<OfficeForCreationDTO, Office>();
+
+        CreateMap<EmployeeForCreationDTO, Employee>();
+
+        CreateMap<LaptopForCreationDTO, Laptop>();
 
     }
 }

@@ -90,47 +90,99 @@ namespace API_Proj.Features.Controllers
         }
 
         // POST: api/Employees
-        [HttpPost("Create")]
-        public async Task<ActionResult<EmployeeForCreationDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO Employee)
+        //[HttpPost("Create")]
+        // public async Task<ActionResult<EmployeeForCreationDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO Employee)
+        // {
+    //         if (Employee.OfficesIDs.Count == 0 || Employee.LaptopID == null)
+    //         {
+    //             return BadRequest("No offices or no laptop or both");
+    //}
+    //     var offices = new List<Office>();
+
+    //     foreach (var id in Employee.OfficesIDs)
+    //     {
+    //         var o = await _context.Office.Where(e => e.OfficeID == id).FirstOrDefaultAsync();
+    //         if (o == null)
+    //         {
+    //             return NotFound("Office not found");
+    //         }
+    //         else { offices.Add(o); }
+    //     }
+
+    //     var laptop = await _context.Laptop.Where(l => l.LaptopID == Employee.LaptopID).FirstOrDefaultAsync();
+    //     if (laptop == null)
+    //     {
+    //         return NotFound("Laptop not found");
+    //     }
+
+    //     var employeeID = 1 + await _context.Employee.OrderBy(e => e.EmployeeID).Select(e => e.EmployeeID).FirstOrDefaultAsync();
+
+    //     var employee = new Employee()
+    //     {
+    //         EmployeeID = employeeID,
+    //         EmployeeName = Employee.EmployeeName,
+    //         JobTitle = Employee.JobTitle,
+    //         YearsAtCompany = Employee.YearsAtCompany,
+    //         CurrentProjects = Employee.CurrentProjects,
+    //         Offices = offices,
+    //         Laptop = laptop
+    //     };
+
+    //     _context.Employee.Add(employee);
+    //     await _context.SaveChangesAsync();
+
+    //     return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeID }, employee);
+    // }
+
+
+    //POST: api/Employees
+    [HttpPost("Create")]
+        public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _Employee)
         {
-            if (Employee.OfficesIDs.Count == 0 || Employee.LaptopID == null)
+            if (_Employee.OfficesIDs.Count == 0 || _Employee.LaptopID == null)
             {
                 return BadRequest("No offices or no laptop or both");
             }
-            var offices = new List<Office>();
 
-            foreach (var id in Employee.OfficesIDs) {
-                var o = await _context.Office.Where(e => e.OfficeID == id).FirstOrDefaultAsync();
-                if (o == null)
+            var Employee = _mapper.Map<Employee>(_Employee);
+
+            if (_Employee.LaptopID != null)
+            {
+
+                var laptop = await _context.Laptop.Where(l => l.LaptopID == _Employee.LaptopID).FirstOrDefaultAsync();
+                if (laptop == null)
                 {
-                    return NotFound("Office not found");
+                    return NotFound("Employee not found");
                 }
-                else { offices.Add(o); }
+
+                Employee.Laptop = laptop;
             }
 
-            var laptop = await _context.Laptop.Where(l => l.LaptopID == Employee.LaptopID).FirstOrDefaultAsync();
-            if (laptop == null)
+            if (_Employee.OfficesIDs.Count != 0)
             {
-                return NotFound("Laptop not found");
+                var offices = new List<Office>();
+
+                foreach (var id in _Employee.OfficesIDs) {
+
+                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+                    if (office == null)
+                    {
+                        return NotFound("Employee not found");
+                    }
+                    office.Employees.Add(Employee);
+                }
             }
 
-            var employeeID = 1 + await _context.Employee.OrderBy(e => e.EmployeeID).Select(e => e.EmployeeID).FirstOrDefaultAsync();
+            _context.Employee.Add(Employee);
 
-            var employee = new Employee()
-            {
-                EmployeeID = employeeID,
-                EmployeeName = Employee.EmployeeName,
-                JobTitle = Employee.JobTitle,
-                YearsAtCompany = Employee.YearsAtCompany,
-                CurrentProjects = Employee.CurrentProjects,
-                Offices = offices,
-                Laptop = laptop
-            };
-
-            _context.Employee.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeID }, employee);
+            var employeeDTO = await _context.Employee
+                .Where(e => e.EmployeeID == Employee.EmployeeID)
+                .Select(e => _mapper.Map<EmployeeDTO>(e))
+                .FirstOrDefaultAsync();
+
+            return employeeDTO;
         }
 
         // DELETE: api/Employees/5

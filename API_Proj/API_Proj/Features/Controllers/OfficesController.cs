@@ -87,37 +87,37 @@ namespace API_Proj.Features.Controllers
         }
 
         // POST: api/Offices
-        [HttpPost("Create")]
-        public async Task<ActionResult<OfficeForCreationDTO>> CreateOffice(OfficeForCreationDTO Office)
-        {
+        //[HttpPost("Create")]
+        //public async Task<ActionResult<OfficeForCreationDTO>> CreateOffice(OfficeForCreationDTO Office)
+        //{
 
-            if (Office.EmployeesIDs.Count != 0)
-            {
-                var employees = new List<Employee>();
-                foreach (var id in Office.EmployeesIDs)
-                {
-                    var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
-                    if (employee == null)
-                    {
-                        return NotFound("Employee not found");
-                    }
-                    else { employees.Add(employee); }
-                }
+        //    if (Office.EmployeesIDs.Count != 0)
+        //    {
+        //        var employees = new List<Employee>();
+        //        foreach (var id in Office.EmployeesIDs)
+        //        {
+        //            var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+        //            if (employee == null)
+        //            {
+        //                return NotFound("Employee not found");
+        //            }
+        //            else { employees.Add(employee); }
+        //        }
 
-            }
-            else
-            {
+        //    }
+        //    else
+        //    {
                 
 
-            }
+        //    }
 
 
 
-            _context.Office.Add(office);
-            await _context.SaveChangesAsync();
+        //    _context.Office.Add(office);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOffice", new { id = office.OfficeID }, office);
-        }
+        //    return CreatedAtAction("GetOffice", new { id = office.OfficeID }, office);
+        //}
 
         // DELETE: api/Offices/5
         [HttpDelete("{id}")]
