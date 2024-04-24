@@ -65,22 +65,6 @@ namespace API_Proj.Migrations
                             EmployeeName = "Hoa Nguyen",
                             JobTitle = "Student Developer",
                             YearsAtCompany = 0.5
-                        },
-                        new
-                        {
-                            EmployeeID = 1003,
-                            CurrentProjects = "[\"Made to Test :(\"]",
-                            EmployeeName = "Mr. Test",
-                            JobTitle = "Tester",
-                            YearsAtCompany = 0.0
-                        },
-                        new
-                        {
-                            EmployeeID = 1004,
-                            CurrentProjects = "[\"Made to Test :(\"]",
-                            EmployeeName = "Ahhh Test",
-                            JobTitle = "Tester",
-                            YearsAtCompany = 0.0
                         });
                 });
 

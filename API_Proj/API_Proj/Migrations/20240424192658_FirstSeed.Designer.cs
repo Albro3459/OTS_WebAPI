@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Proj.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20240415222833_FirstSeed")]
+    [Migration("20240424192658_FirstSeed")]
     partial class FirstSeed
     {
         /// <inheritdoc />
@@ -45,8 +45,8 @@ namespace API_Proj.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("YearsAtCompany")
-                        .HasColumnType("int");
+                    b.Property<double?>("YearsAtCompany")
+                        .HasColumnType("float");
 
                     b.HasKey("EmployeeID");
 
@@ -59,7 +59,15 @@ namespace API_Proj.Migrations
                             CurrentProjects = "[\"Api Project\"]",
                             EmployeeName = "Alex Brodsky",
                             JobTitle = "Student Developer",
-                            YearsAtCompany = 0
+                            YearsAtCompany = 0.5
+                        },
+                        new
+                        {
+                            EmployeeID = 1002,
+                            CurrentProjects = "[\"Twidling Thumbs\"]",
+                            EmployeeName = "Hoa Nguyen",
+                            JobTitle = "Student Developer",
+                            YearsAtCompany = 0.5
                         });
                 });
 
@@ -71,7 +79,7 @@ namespace API_Proj.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LaptopID"));
 
-                    b.Property<int>("EmployeeID")
+                    b.Property<int?>("EmployeeID")
                         .HasColumnType("int");
 
                     b.Property<string>("LaptopName")
@@ -82,7 +90,8 @@ namespace API_Proj.Migrations
                     b.HasKey("LaptopID");
 
                     b.HasIndex("EmployeeID")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[EmployeeID] IS NOT NULL");
 
                     b.ToTable("Laptop");
 
@@ -92,6 +101,12 @@ namespace API_Proj.Migrations
                             LaptopID = 1001,
                             EmployeeID = 1001,
                             LaptopName = "Brodsky's Laptop"
+                        },
+                        new
+                        {
+                            LaptopID = 1002,
+                            EmployeeID = 1002,
+                            LaptopName = "Hoa's Laptop"
                         });
                 });
 
@@ -186,6 +201,11 @@ namespace API_Proj.Migrations
                         {
                             OfficesID = 1002,
                             EmployeesID = 1001
+                        },
+                        new
+                        {
+                            OfficesID = 1001,
+                            EmployeesID = 1002
                         });
                 });
 
@@ -193,9 +213,7 @@ namespace API_Proj.Migrations
                 {
                     b.HasOne("API_Proj.Domain.Entity.Employee", "Employee")
                         .WithOne("Laptop")
-                        .HasForeignKey("API_Proj.Domain.Entity.Laptop", "EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("API_Proj.Domain.Entity.Laptop", "EmployeeID");
 
                     b.Navigation("Employee");
                 });

@@ -93,7 +93,7 @@ namespace API_Proj.Features.Controllers
 
             if (_Laptop == null)
             {
-                return BadRequest("Laptop invalid");
+                return BadRequest("Laptop can't be null");
             }
 
             var Laptop = _mapper.Map<Laptop>(_Laptop);
@@ -105,6 +105,11 @@ namespace API_Proj.Features.Controllers
                 if (employee == null)
                 {
                     return NotFound("Employee not found");
+                }
+
+                if (employee.Laptop != null)
+                {
+                    return BadRequest("Employee already has a laptop");
                 }
 
                 employee.Laptop = Laptop;
@@ -119,7 +124,7 @@ namespace API_Proj.Features.Controllers
                 .Select(l => _mapper.Map<LaptopDTO>(l))
                 .FirstOrDefaultAsync();
 
-            return laptopDTO;
+            return laptopDTO ?? new LaptopDTO();
         }
 
         // DELETE: api/Laptops/5

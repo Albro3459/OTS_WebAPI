@@ -15,7 +15,11 @@ namespace API_Proj.Migrations
             migrationBuilder.InsertData(
                 table: "Employee",
                 columns: new[] { "EmployeeID", "CurrentProjects", "EmployeeName", "JobTitle", "YearsAtCompany" },
-                values: new object[] { 1001, "[\"Api Project\"]", "Alex Brodsky", "Student Developer", 0 });
+                values: new object[,]
+                {
+                    { 1001, "[\"Api Project\"]", "Alex Brodsky", "Student Developer", 0.5 },
+                    { 1002, "[\"Twidling Thumbs\"]", "Hoa Nguyen", "Student Developer", 0.5 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Region",
@@ -29,7 +33,11 @@ namespace API_Proj.Migrations
             migrationBuilder.InsertData(
                 table: "Laptop",
                 columns: new[] { "LaptopID", "EmployeeID", "LaptopName" },
-                values: new object[] { 1001, 1001, "Brodsky's Laptop" });
+                values: new object[,]
+                {
+                    { 1001, 1001, "Brodsky's Laptop" },
+                    { 1002, 1002, "Hoa's Laptop" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Office",
@@ -46,6 +54,7 @@ namespace API_Proj.Migrations
                 values: new object[,]
                 {
                     { 1001, 1001 },
+                    { 1002, 1001 },
                     { 1001, 1002 }
                 });
         }
@@ -59,9 +68,19 @@ namespace API_Proj.Migrations
                 keyValue: 1001);
 
             migrationBuilder.DeleteData(
+                table: "Laptop",
+                keyColumn: "LaptopID",
+                keyValue: 1002);
+
+            migrationBuilder.DeleteData(
                 table: "OfficeEmployee",
                 keyColumns: new[] { "EmployeesID", "OfficesID" },
                 keyValues: new object[] { 1001, 1001 });
+
+            migrationBuilder.DeleteData(
+                table: "OfficeEmployee",
+                keyColumns: new[] { "EmployeesID", "OfficesID" },
+                keyValues: new object[] { 1002, 1001 });
 
             migrationBuilder.DeleteData(
                 table: "OfficeEmployee",
@@ -72,6 +91,11 @@ namespace API_Proj.Migrations
                 table: "Employee",
                 keyColumn: "EmployeeID",
                 keyValue: 1001);
+
+            migrationBuilder.DeleteData(
+                table: "Employee",
+                keyColumn: "EmployeeID",
+                keyValue: 1002);
 
             migrationBuilder.DeleteData(
                 table: "Office",

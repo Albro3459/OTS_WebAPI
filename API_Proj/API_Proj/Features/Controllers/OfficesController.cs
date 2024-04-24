@@ -9,6 +9,7 @@ using API_Proj.Domain.Entity;
 using API_Proj.Infastructure;
 using AutoMapper;
 using API_Proj.Features.DTO;
+using System.Drawing;
 
 namespace API_Proj.Features.Controllers
 {
@@ -86,38 +87,128 @@ namespace API_Proj.Features.Controllers
             return NoContent();
         }
 
-        // POST: api/Offices
+        ////POST: api/Employees
         //[HttpPost("Create")]
-        //public async Task<ActionResult<OfficeForCreationDTO>> CreateOffice(OfficeForCreationDTO Office)
+        //public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _Employee)
         //{
 
-        //    if (Office.EmployeesIDs.Count != 0)
+        //    if (_Employee == null)
         //    {
-        //        var employees = new List<Employee>();
-        //        foreach (var id in Office.EmployeesIDs)
+        //        return BadRequest("Employee is null");
+        //    }
+
+        //    var Employee = _mapper.Map<Employee>(_Employee);
+
+        //    if (_Employee.LaptopID != null)
+        //    {
+
+        //        var laptop = await _context.Laptop.Where(l => l.LaptopID == _Employee.LaptopID).FirstOrDefaultAsync();
+        //        if (laptop == null)
         //        {
-        //            var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
-        //            if (employee == null)
+        //            return NotFound("Employee not found");
+        //        }
+
+        //        if (laptop.EmployeeID != null)
+        //        {
+        //            return BadRequest("Laptop is taken");
+        //        }
+
+        //        Employee.Laptop = laptop;
+        //    }
+
+        //    if (_Employee.OfficesIDs != null && _Employee.OfficesIDs.Count != 0)
+        //    {
+        //        var offices = new List<Office>();
+
+        //        foreach (var id in _Employee.OfficesIDs)
+        //        {
+
+        //            var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+        //            if (office == null)
         //            {
         //                return NotFound("Employee not found");
         //            }
-        //            else { employees.Add(employee); }
+        //            office.Employees.Add(Employee);
         //        }
-
-        //    }
-        //    else
-        //    {
-                
-
         //    }
 
+        //    _context.Employee.Add(Employee);
 
-
-        //    _context.Office.Add(office);
         //    await _context.SaveChangesAsync();
 
-        //    return CreatedAtAction("GetOffice", new { id = office.OfficeID }, office);
+        //    var employeeDTO = await _context.Employee
+        //        .Where(e => e.EmployeeID == Employee.EmployeeID)
+        //        .Select(e => _mapper.Map<EmployeeDTO>(e))
+        //        .FirstOrDefaultAsync();
+
+        //    return employeeDTO ?? new EmployeeDTO();
         //}
+
+        // POST: api/Offices
+        [HttpPost("Create")]
+        public async Task<ActionResult<OfficeDTO>> CreateOffice(OfficeForCreationDTO _office)
+        {
+
+            if (_office == null)
+            {
+                return BadRequest("Office can't be null");
+            }
+
+            var Office = _mapper.Map<Office>(_office);
+
+            if (_office.EmployeesIDs != null && _office.EmployeesIDs.Count != 0)
+            {
+                foreach (var id in _office.EmployeesIDs)
+                {
+                    var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+                    if (employee == null)
+                    {
+                        return NotFound("Employees doesn't exist");
+                    }
+
+                    if (employee.Offices.Contains(Office))
+                    {
+                        continue;
+                        //return BadRequest("Employee already works at that office");
+                    }
+                    Office.Employees.Add(employee);
+
+                }
+            }
+
+            if (_office.RegionID != null)
+            {
+                var region = await _context.Region.Where(r => r.RegionID == _office.RegionID).FirstOrDefaultAsync();
+                if (region == null)
+                {
+                    return NotFound("Region doesn't exist");
+                }
+                if (!region.Offices.Contains(Office))
+                {
+                    Office.Region = region;
+                }
+                
+                region.Offices.Add(Office);
+            }
+
+            // Uneccesary but works, ef core does it for me
+            //foreach (var e in Office.Employees)
+            //{
+            //    e.Offices.Add(Office);
+            //}
+
+            _context.Office.Add(Office);
+            await _context.SaveChangesAsync();
+
+            var officeDTO = await _context.Office
+                .Where(o => o.OfficeID == Office.OfficeID)
+                .Select(o => _mapper.Map<OfficeDTO>(o))
+                .FirstOrDefaultAsync();
+
+            return officeDTO ?? new OfficeDTO();
+        }
+
+
 
         // DELETE: api/Offices/5
         [HttpDelete("{id}")]

@@ -18,7 +18,7 @@ namespace API_Proj.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     JobTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    YearsAtCompany = table.Column<int>(type: "int", nullable: true),
+                    YearsAtCompany = table.Column<double>(type: "float", nullable: true),
                     CurrentProjects = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -46,7 +46,7 @@ namespace API_Proj.Migrations
                     LaptopID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LaptopName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    EmployeeID = table.Column<int>(type: "int", nullable: false)
+                    EmployeeID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,8 +55,7 @@ namespace API_Proj.Migrations
                         name: "FK_Laptop_Employee_EmployeeID",
                         column: x => x.EmployeeID,
                         principalTable: "Employee",
-                        principalColumn: "EmployeeID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployeeID");
                 });
 
             migrationBuilder.CreateTable(
@@ -107,7 +106,8 @@ namespace API_Proj.Migrations
                 name: "IX_Laptop_EmployeeID",
                 table: "Laptop",
                 column: "EmployeeID",
-                unique: true);
+                unique: true,
+                filter: "[EmployeeID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Office_RegionID",

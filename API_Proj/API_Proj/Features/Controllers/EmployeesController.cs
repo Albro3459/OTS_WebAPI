@@ -89,59 +89,13 @@ namespace API_Proj.Features.Controllers
             return NoContent();
         }
 
-        // POST: api/Employees
-        //[HttpPost("Create")]
-        // public async Task<ActionResult<EmployeeForCreationDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO Employee)
-        // {
-    //         if (Employee.OfficesIDs.Count == 0 || Employee.LaptopID == null)
-    //         {
-    //             return BadRequest("No offices or no laptop or both");
-    //}
-    //     var offices = new List<Office>();
-
-    //     foreach (var id in Employee.OfficesIDs)
-    //     {
-    //         var o = await _context.Office.Where(e => e.OfficeID == id).FirstOrDefaultAsync();
-    //         if (o == null)
-    //         {
-    //             return NotFound("Office not found");
-    //         }
-    //         else { offices.Add(o); }
-    //     }
-
-    //     var laptop = await _context.Laptop.Where(l => l.LaptopID == Employee.LaptopID).FirstOrDefaultAsync();
-    //     if (laptop == null)
-    //     {
-    //         return NotFound("Laptop not found");
-    //     }
-
-    //     var employeeID = 1 + await _context.Employee.OrderBy(e => e.EmployeeID).Select(e => e.EmployeeID).FirstOrDefaultAsync();
-
-    //     var employee = new Employee()
-    //     {
-    //         EmployeeID = employeeID,
-    //         EmployeeName = Employee.EmployeeName,
-    //         JobTitle = Employee.JobTitle,
-    //         YearsAtCompany = Employee.YearsAtCompany,
-    //         CurrentProjects = Employee.CurrentProjects,
-    //         Offices = offices,
-    //         Laptop = laptop
-    //     };
-
-    //     _context.Employee.Add(employee);
-    //     await _context.SaveChangesAsync();
-
-    //     return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeID }, employee);
-    // }
-
-
-    //POST: api/Employees
-    [HttpPost("Create")]
+        //POST: api/Employees
+        [HttpPost("Create")]
         public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _Employee)
         {
-            if (_Employee.OfficesIDs.Count == 0 || _Employee.LaptopID == null)
-            {
-                return BadRequest("No offices or no laptop or both");
+
+            if (_Employee == null) {
+                return BadRequest("Employee can't be null");
             }
 
             var Employee = _mapper.Map<Employee>(_Employee);
@@ -155,10 +109,15 @@ namespace API_Proj.Features.Controllers
                     return NotFound("Employee not found");
                 }
 
+                if (laptop.EmployeeID != null)
+                {
+                    return BadRequest("Laptop is taken");
+                }
+
                 Employee.Laptop = laptop;
             }
 
-            if (_Employee.OfficesIDs.Count != 0)
+            if (_Employee.OfficesIDs != null && _Employee.OfficesIDs.Count != 0)
             {
                 var offices = new List<Office>();
 
@@ -182,7 +141,7 @@ namespace API_Proj.Features.Controllers
                 .Select(e => _mapper.Map<EmployeeDTO>(e))
                 .FirstOrDefaultAsync();
 
-            return employeeDTO;
+            return employeeDTO ?? new EmployeeDTO();
         }
 
         // DELETE: api/Employees/5
