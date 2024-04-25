@@ -87,63 +87,6 @@ namespace API_Proj.Features.Controllers
             return NoContent();
         }
 
-        ////POST: api/Employees
-        //[HttpPost("Create")]
-        //public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _Employee)
-        //{
-
-        //    if (_Employee == null)
-        //    {
-        //        return BadRequest("Employee is null");
-        //    }
-
-        //    var Employee = _mapper.Map<Employee>(_Employee);
-
-        //    if (_Employee.LaptopID != null)
-        //    {
-
-        //        var laptop = await _context.Laptop.Where(l => l.LaptopID == _Employee.LaptopID).FirstOrDefaultAsync();
-        //        if (laptop == null)
-        //        {
-        //            return NotFound("Employee not found");
-        //        }
-
-        //        if (laptop.EmployeeID != null)
-        //        {
-        //            return BadRequest("Laptop is taken");
-        //        }
-
-        //        Employee.Laptop = laptop;
-        //    }
-
-        //    if (_Employee.OfficesIDs != null && _Employee.OfficesIDs.Count != 0)
-        //    {
-        //        var offices = new List<Office>();
-
-        //        foreach (var id in _Employee.OfficesIDs)
-        //        {
-
-        //            var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
-        //            if (office == null)
-        //            {
-        //                return NotFound("Employee not found");
-        //            }
-        //            office.Employees.Add(Employee);
-        //        }
-        //    }
-
-        //    _context.Employee.Add(Employee);
-
-        //    await _context.SaveChangesAsync();
-
-        //    var employeeDTO = await _context.Employee
-        //        .Where(e => e.EmployeeID == Employee.EmployeeID)
-        //        .Select(e => _mapper.Map<EmployeeDTO>(e))
-        //        .FirstOrDefaultAsync();
-
-        //    return employeeDTO ?? new EmployeeDTO();
-        //}
-
         // POST: api/Offices
         [HttpPost("Create")]
         public async Task<ActionResult<OfficeDTO>> CreateOffice(OfficeForCreationDTO _office)
@@ -151,7 +94,7 @@ namespace API_Proj.Features.Controllers
 
             if (_office == null)
             {
-                return BadRequest("Office can't be null");
+                return NotFound("Office can't be null");
             }
 
             var Office = _mapper.Map<Office>(_office);

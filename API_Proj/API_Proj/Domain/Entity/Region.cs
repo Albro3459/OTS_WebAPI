@@ -12,7 +12,7 @@ namespace API_Proj.Domain.Entity
         [MaxLength(50)]
         public string RegionName { get; set; } = string.Empty;
 
-        public ICollection<Office> Offices { get; set; } = new List<Office>();
+        public ICollection<Office>? Offices { get; set; } = new List<Office>();
 
     }
 }

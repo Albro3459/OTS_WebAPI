@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 using API_Proj.Infastructure;
 using API_Proj.Domain.Entity;
@@ -17,7 +18,14 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
 
 // Add services to the container.
 
+//builder.Services.AddControllers(options =>
+//{
+//    options.ReturnHttpNotAcceptable = true;
+//}).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
+
 builder.Services.AddControllers();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

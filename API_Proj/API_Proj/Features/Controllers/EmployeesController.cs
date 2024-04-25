@@ -91,19 +91,19 @@ namespace API_Proj.Features.Controllers
 
         //POST: api/Employees
         [HttpPost("Create")]
-        public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _Employee)
+        public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _employee)
         {
 
-            if (_Employee == null) {
-                return BadRequest("Employee can't be null");
+            if (_employee == null) {
+                return NotFound("Employee can't be null");
             }
 
-            var Employee = _mapper.Map<Employee>(_Employee);
+            var Employee = _mapper.Map<Employee>(_employee);
 
-            if (_Employee.LaptopID != null)
+            if (_employee.LaptopID != null)
             {
 
-                var laptop = await _context.Laptop.Where(l => l.LaptopID == _Employee.LaptopID).FirstOrDefaultAsync();
+                var laptop = await _context.Laptop.Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
                 if (laptop == null)
                 {
                     return NotFound("Employee not found");
@@ -111,22 +111,22 @@ namespace API_Proj.Features.Controllers
 
                 if (laptop.EmployeeID != null)
                 {
-                    return BadRequest("Laptop is taken");
+                    return NotFound("Laptop is taken");
                 }
 
                 Employee.Laptop = laptop;
             }
 
-            if (_Employee.OfficesIDs != null && _Employee.OfficesIDs.Count != 0)
+            if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count != 0)
             {
                 var offices = new List<Office>();
 
-                foreach (var id in _Employee.OfficesIDs) {
+                foreach (var id in _employee.OfficesIDs) {
 
                     var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
                     if (office == null)
                     {
-                        return NotFound("Employee not found");
+                        return NotFound("Office not found");
                     }
                     office.Employees.Add(Employee);
                 }

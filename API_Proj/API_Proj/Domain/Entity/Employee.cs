@@ -19,7 +19,7 @@ namespace API_Proj.Domain.Entity
 
         public List<string>? CurrentProjects { get; set; } = new();
 
-        public ICollection<Office> Offices { get; set; } = new List<Office>();
+        public ICollection<Office>? Offices { get; set; } = new List<Office>();
 
         public Laptop? Laptop { get; set; }
 

@@ -11,7 +11,7 @@ namespace API_Proj.Features.DTO
         [Required]
         public string RegionName { get; set; } = string.Empty;
 
-        public List<int> OfficesIDs { get; set; } = new List<int>();
+        public List<int>? OfficesIDs { get; set; } = new List<int>();
 
     }
 

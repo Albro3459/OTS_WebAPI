@@ -11,6 +11,8 @@ using AutoMapper;
 using API_Proj.Features.DTO;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace API_Proj.Features.Controllers
 {
@@ -33,7 +35,7 @@ namespace API_Proj.Features.Controllers
         {
             var laptops = await _context.Laptop
                 .Select(l => _mapper.Map<LaptopDTO>(l))
-                .ToListAsync();  
+                .ToListAsync();
 
             return laptops;
         }
@@ -55,53 +57,61 @@ namespace API_Proj.Features.Controllers
             return laptop;
         }
 
-        // PUT: api/Laptops/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //PUT: api/Laptops/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLaptop(int id, Laptop laptop)
+        public async Task<IActionResult> UpdateLaptop(int id, LaptopForCreationDTO _laptop)
         {
-            if (id != laptop.LaptopID)
+            if (_laptop == null)
             {
-                return BadRequest();
+                return NotFound("Laptop can't be null");
             }
 
-            _context.Entry(laptop).State = EntityState.Modified;
+            var oldLaptop = await _context.Laptop
+                .Include(l => l.Employee)
+                .Where(l => l.LaptopID == id).FirstOrDefaultAsync();
 
-            try
+            if (oldLaptop == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LaptopExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound("Laptop doesn't exist");
             }
 
-            return NoContent();
+            oldLaptop.LaptopName = _laptop.LaptopName;
+
+            if (_laptop.EmployeeID != null && oldLaptop.EmployeeID != _laptop.EmployeeID)
+            {
+                var employee = await _context.Employee.Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
+
+                if (employee == null) { return BadRequest("Employee doesn't exist"); }
+
+                oldLaptop.EmployeeID = _laptop.EmployeeID;
+                oldLaptop.Employee = employee;
+
+            }
+
+            _context.Update(oldLaptop);
+            _context.SaveChanges();
+
+            var returnLaptop = _mapper.Map<LaptopDTO>(oldLaptop);
+            return Ok(returnLaptop);
+
         }
 
         // POST: api/Laptops/
         [HttpPost("Create")]
-        public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _Laptop)
+        public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _laptop)
         {
 
-            if (_Laptop == null)
+            if (_laptop == null)
             {
-                return BadRequest("Laptop can't be null");
+                return NotFound("Laptop can't be null");
             }
 
-            var Laptop = _mapper.Map<Laptop>(_Laptop);
+            var Laptop = _mapper.Map<Laptop>(_laptop);
 
-            if (_Laptop.EmployeeID != null)
+            if (_laptop.EmployeeID != null)
             {
               
-                var employee = await _context.Employee.Where(e => e.EmployeeID == _Laptop.EmployeeID).FirstOrDefaultAsync();
+                var employee = await _context.Employee.Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
                 if (employee == null)
                 {
                     return NotFound("Employee not found");

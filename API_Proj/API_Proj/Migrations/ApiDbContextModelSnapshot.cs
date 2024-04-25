@@ -120,7 +120,7 @@ namespace API_Proj.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("RegionID")
+                    b.Property<int?>("RegionID")
                         .HasColumnType("int");
 
                     b.HasKey("OfficeID");
@@ -219,9 +219,7 @@ namespace API_Proj.Migrations
                 {
                     b.HasOne("API_Proj.Domain.Entity.Region", "Region")
                         .WithMany("Offices")
-                        .HasForeignKey("RegionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RegionID");
 
                     b.Navigation("Region");
                 });

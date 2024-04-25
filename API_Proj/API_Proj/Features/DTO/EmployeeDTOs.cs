@@ -17,7 +17,7 @@ namespace API_Proj.Features.DTO
 
         public List<string>? CurrentProjects { get; set; } = new();
 
-        public List<int> OfficesIDs { get; set; } = new List<int>();
+        public List<int>? OfficesIDs { get; set; } = new List<int>();
 
         public int? LaptopID { get; set; }
 

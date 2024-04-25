@@ -91,15 +91,48 @@ namespace API_Proj.Features.Controllers
         }
 
         // POST: api/Regions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Region>> PostRegion(Region region)
+        [HttpPost("Create")]
+        public async Task<ActionResult<RegionDTO>> CreateRegion(RegionForCreationDTO _region)
         {
-            _context.Region.Add(region);
+
+            if (_region == null)
+            {
+                return NotFound("Region can't be null");
+            }
+
+            var Region = _mapper.Map<Region>(_region);
+
+            if (_region.OfficesIDs != null && _region.OfficesIDs.Count != 0)
+            {
+                foreach (var id in _region.OfficesIDs)
+                {
+                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+                    if (office == null)
+                    {
+                        return NotFound("Employees doesn't exist");
+                    }
+
+                    if (office.Region == Region)
+                    {
+                        continue;
+                        //return NotFound("Employee already works at that office");
+                    }
+                    Region.Offices.Add(office);
+
+                }
+            }
+
+            _context.Region.Add(Region);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRegion", new { id = region.RegionID }, region);
+            var regionDTO = await _context.Region
+                .Where(r => r.RegionID == Region.RegionID)
+                .Select(r => _mapper.Map<RegionDTO>(r))
+                .FirstOrDefaultAsync();
+
+            return regionDTO ?? new RegionDTO();
         }
+
 
         // DELETE: api/Regions/5
         [HttpDelete("{id}")]

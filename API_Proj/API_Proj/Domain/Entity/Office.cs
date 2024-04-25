@@ -14,11 +14,10 @@ namespace API_Proj.Domain.Entity
         public string OfficeName { get; set; } = string.Empty;
 
         [ForeignKey("RegionID")]
-        [Required]
-        public int RegionID { get; set; }
-        public Region Region { get; set; } = null!;
+        public int? RegionID { get; set; }
+        public Region? Region { get; set; } = null!;
 
-        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
+        public ICollection<Employee>? Employees { get; set; } = new List<Employee>();
             
     }
 }
