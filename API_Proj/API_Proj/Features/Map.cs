@@ -27,6 +27,18 @@ public class Map: Profile
 
         CreateMap<Laptop, LaptopDTO>();
 
+
+        // map back from DTO to Model
+
+        CreateMap<RegionDTO, Region>();
+
+        CreateMap<OfficeDTO, Office>();
+
+        CreateMap<EmployeeDTO, Employee>();
+
+        CreateMap<LaptopDTO, Laptop>();
+
+
         // map back from CreationDTO to Model
 
         CreateMap<RegionForCreationDTO, Region>();

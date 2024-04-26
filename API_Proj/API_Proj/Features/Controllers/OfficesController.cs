@@ -56,9 +56,8 @@ namespace API_Proj.Features.Controllers
             return office;
         }
 
-        // PUT: api/Offices/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        // PUT: api/Offices/
+        [HttpPut]
         public async Task<IActionResult> PutOffice(int id, Office office)
         {
             if (id != office.OfficeID)
@@ -103,7 +102,14 @@ namespace API_Proj.Features.Controllers
             {
                 foreach (var id in _office.EmployeesIDs)
                 {
-                    var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+                    var employee = await _context.Employee
+                        .Include(e => e.Offices)
+                        .ThenInclude(o => o.Region)
+                        .Include(e => e.Offices)
+                        .ThenInclude(o => o.Employees)
+                        .Include(e => e.Laptop)
+                        .Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+
                     if (employee == null)
                     {
                         return NotFound("Employees doesn't exist");
@@ -143,10 +149,12 @@ namespace API_Proj.Features.Controllers
             _context.Office.Add(Office);
             await _context.SaveChangesAsync();
 
-            var officeDTO = await _context.Office
-                .Where(o => o.OfficeID == Office.OfficeID)
-                .Select(o => _mapper.Map<OfficeDTO>(o))
-                .FirstOrDefaultAsync();
+            //var officeDTO = await _context.Office
+            //    .Where(o => o.OfficeID == Office.OfficeID)
+            //    .Select(o => _mapper.Map<OfficeDTO>(o))
+            //    .FirstOrDefaultAsync();
+
+            var officeDTO = _mapper.Map<OfficeDTO>(Office);
 
             return officeDTO ?? new OfficeDTO();
         }

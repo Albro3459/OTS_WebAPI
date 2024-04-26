@@ -10,6 +10,7 @@ using API_Proj.Infastructure;
 using API_Proj.Features.DTO;
 using API_Proj.Features;
 using AutoMapper;
+using System.Security.Cryptography;
 
 namespace API_Proj.Features.Controllers
 {
@@ -58,35 +59,90 @@ namespace API_Proj.Features.Controllers
             return employee;
         }
 
-        // PUT: api/Employees/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        // PUT: api/Employees/Update/
+        [HttpPut("Update/")]
+        public async Task<IActionResult> UpdateEmployee(EmployeeDTO _employee)
         {
-            if (id != employee.EmployeeID)
-            {
-                return BadRequest();
-            }
+            if (_employee == null)
+            { return NotFound("Employee can't be null"); }
 
-            _context.Entry(employee).State = EntityState.Modified;
+            var oldEmployee = await _context.Employee
+                .Include(e => e.Laptop)
+                .Include(e => e.Offices)
+                .ThenInclude(o => o.Region)
+                .ThenInclude(r => r.Offices)
+                .Where(e => e.EmployeeID == _employee.EmployeeID).FirstOrDefaultAsync();
 
-            try
+            if (oldEmployee == null)
+            { return NotFound("Employee doesn't exist"); }
+
+            //oldEmployee.EmployeeName = _employee.EmployeeName;
+            //oldEmployee.JobTitle = _employee.JobTitle;  
+            //oldEmployee.YearsAtCompany = _employee.YearsAtCompany;
+            //oldEmployee.CurrentProjects = _employee.CurrentProjects;
+            _mapper.Map(_employee, oldEmployee);
+
+
+            if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count > 0)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmployeeExists(id))
+                var oldOffices = new List<Office>(oldEmployee.Offices.Select(o => _mapper.Map(o, new Office())));
+
+                // remove offices that new Employee doesn't work at
+                foreach (var office in oldEmployee.Offices)
                 {
-                    return NotFound();
+                    if (!_employee.OfficesIDs.Contains(office.OfficeID))
+                    {
+                        // need to get the exact object reference to delete
+                        var deleteMe = oldOffices.Where(o => o.OfficeID == office.OfficeID).FirstOrDefault();
+                        oldOffices.Remove(deleteMe);
+                    }
                 }
-                else
+
+                // add New Offices
+                foreach (var id in _employee.OfficesIDs)
                 {
-                    throw;
+
+                    if (oldOffices.Any(o => o.OfficeID == id)) { continue; }
+
+                    var office = await _context.Office
+                        .Include(o => o.Employees)
+                        .ThenInclude(e => e.Laptop)
+                        .Include(o => o.Employees)
+                        .ThenInclude(e => e.Offices)
+                        .ThenInclude(o => o.Region)
+                        .Include(o => o.Region)
+                        .ThenInclude(r => r.Offices)
+                        .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+
+                    if (office == null) { continue; }
+
+                    oldOffices.Add(office);
+
                 }
+                oldEmployee.Offices = oldOffices;
+
             }
 
-            return NoContent();
+            if (_employee.LaptopID != null)
+            {
+                if (oldEmployee.Laptop == null || oldEmployee.Laptop.LaptopID != _employee.LaptopID) {
+
+                    var laptop = await _context.Laptop.Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
+
+                    if (laptop == null) { return NotFound("Laptop doesn't exist"); }
+
+                    oldEmployee.Laptop = laptop;
+                }
+
+            }
+
+            _context.Update(oldEmployee);
+            _context.SaveChanges();
+
+            var employeeDTO = _mapper.Map<EmployeeDTO>(oldEmployee);
+
+            return Ok(employeeDTO);
+            
         }
 
         //POST: api/Employees
@@ -103,7 +159,14 @@ namespace API_Proj.Features.Controllers
             if (_employee.LaptopID != null)
             {
 
-                var laptop = await _context.Laptop.Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
+                var laptop = await _context.Laptop
+                    .Include(l => l.Employee)
+                    .ThenInclude(e => e.Laptop)
+                    .Include(l => l.Employee)
+                    .ThenInclude(e => e.Offices)
+                    .ThenInclude(o => o.Region)
+                    .Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
+                
                 if (laptop == null)
                 {
                     return NotFound("Employee not found");
@@ -123,7 +186,16 @@ namespace API_Proj.Features.Controllers
 
                 foreach (var id in _employee.OfficesIDs) {
 
-                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+                    var office = await _context.Office
+                        .Include(o => o.Employees)
+                        .ThenInclude(e => e.Laptop)
+                        .Include(o => o.Employees)
+                        .ThenInclude(e => e.Offices)
+                        .ThenInclude(o => o.Region)
+                        .Include(o => o.Region)
+                        .ThenInclude(r => r.Offices)
+                        .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+                    
                     if (office == null)
                     {
                         return NotFound("Office not found");
@@ -136,10 +208,13 @@ namespace API_Proj.Features.Controllers
 
             await _context.SaveChangesAsync();
 
-            var employeeDTO = await _context.Employee
-                .Where(e => e.EmployeeID == Employee.EmployeeID)
-                .Select(e => _mapper.Map<EmployeeDTO>(e))
-                .FirstOrDefaultAsync();
+            //var employeeDTO = await _context.Employee
+            //    .Where(e => e.EmployeeID == Employee.EmployeeID)
+            //    .Select(e => _mapper.Map<EmployeeDTO>(e))
+            //    .FirstOrDefaultAsync();
+
+            var employeeDTO = _mapper.Map<EmployeeDTO>(Employee);
+
 
             return employeeDTO ?? new EmployeeDTO();
         }

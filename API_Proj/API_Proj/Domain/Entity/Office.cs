@@ -18,6 +18,6 @@ namespace API_Proj.Domain.Entity
         public Region? Region { get; set; } = null!;
 
         public ICollection<Employee>? Employees { get; set; } = new List<Employee>();
-            
+ 
     }
 }

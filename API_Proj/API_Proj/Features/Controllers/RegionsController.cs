@@ -55,9 +55,8 @@ namespace API_Proj.Features.Controllers
             return region;
         }
 
-        // PUT: api/Regions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        // PUT: api/Regions/
+        [HttpPut]
         public async Task<IActionResult> PutRegion(int id, RegionDTO regionDTO)
         {
             if (id != regionDTO.RegionID)
@@ -106,7 +105,16 @@ namespace API_Proj.Features.Controllers
             {
                 foreach (var id in _region.OfficesIDs)
                 {
-                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+                    var office = await _context.Office
+                        .Include(o => o.Employees)
+                        .ThenInclude(e => e.Offices)
+                        .ThenInclude(o => o.Region)
+                        .Include(o => o.Employees)
+                        .ThenInclude(e => e.Laptop)
+                        .Include(o => o.Region)
+                        .ThenInclude(r => r.Offices)
+                        .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+
                     if (office == null)
                     {
                         return NotFound("Employees doesn't exist");
@@ -125,10 +133,12 @@ namespace API_Proj.Features.Controllers
             _context.Region.Add(Region);
             await _context.SaveChangesAsync();
 
-            var regionDTO = await _context.Region
-                .Where(r => r.RegionID == Region.RegionID)
-                .Select(r => _mapper.Map<RegionDTO>(r))
-                .FirstOrDefaultAsync();
+            //var regionDTO = await _context.Region
+            //    .Where(r => r.RegionID == Region.RegionID)
+            //    .Select(r => _mapper.Map<RegionDTO>(r))
+            //    .FirstOrDefaultAsync();
+
+            var regionDTO = _mapper.Map<RegionDTO>(Region);
 
             return regionDTO ?? new RegionDTO();
         }

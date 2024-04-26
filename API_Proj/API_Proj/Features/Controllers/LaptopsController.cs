@@ -57,9 +57,9 @@ namespace API_Proj.Features.Controllers
             return laptop;
         }
 
-        //PUT: api/Laptops/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateLaptop(int id, LaptopForCreationDTO _laptop)
+        //PUT: api/Laptops/Update/
+        [HttpPut("Update/")]
+        public async Task<IActionResult> UpdateLaptop(LaptopDTO _laptop)
         {
             if (_laptop == null)
             {
@@ -68,23 +68,31 @@ namespace API_Proj.Features.Controllers
 
             var oldLaptop = await _context.Laptop
                 .Include(l => l.Employee)
-                .Where(l => l.LaptopID == id).FirstOrDefaultAsync();
+                .Where(l => l.LaptopID == _laptop.LaptopID).FirstOrDefaultAsync();
 
             if (oldLaptop == null)
             {
                 return NotFound("Laptop doesn't exist");
             }
 
-            oldLaptop.LaptopName = _laptop.LaptopName;
+            _mapper.Map(_laptop, oldLaptop);
 
-            if (_laptop.EmployeeID != null && oldLaptop.EmployeeID != _laptop.EmployeeID)
+            if (_laptop.EmployeeID != null)
             {
-                var employee = await _context.Employee.Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
+                if (oldLaptop.Employee == null || oldLaptop.Employee.EmployeeID != _laptop.EmployeeID)
+                {    var employee = await _context.Employee
+                        .Include(e => e.Offices)
+                        .ThenInclude(o => o.Region)
+                        .Include(e => e.Offices)
+                        .ThenInclude(o => o.Employees)
+                        .ThenInclude(e => e.Laptop)
+                        .Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
 
-                if (employee == null) { return BadRequest("Employee doesn't exist"); }
+                    if (employee == null) { return BadRequest("Employee doesn't exist"); }
 
-                oldLaptop.EmployeeID = _laptop.EmployeeID;
-                oldLaptop.Employee = employee;
+                    oldLaptop.EmployeeID = _laptop.EmployeeID;
+                    oldLaptop.Employee = employee;
+                }
 
             }
 
@@ -111,7 +119,10 @@ namespace API_Proj.Features.Controllers
             if (_laptop.EmployeeID != null)
             {
               
-                var employee = await _context.Employee.Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
+                var employee = await _context.Employee
+                    .Include(e => e.Offices)
+                    .Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
+
                 if (employee == null)
                 {
                     return NotFound("Employee not found");
@@ -129,10 +140,12 @@ namespace API_Proj.Features.Controllers
 
             await _context.SaveChangesAsync();
 
-            var laptopDTO = await _context.Laptop
-                .Where(l => l.LaptopID == Laptop.LaptopID)
-                .Select(l => _mapper.Map<LaptopDTO>(l))
-                .FirstOrDefaultAsync();
+            //var laptopDTO = await _context.Laptop
+            //    .Where(l => l.LaptopID == Laptop.LaptopID)
+            //    .Select(l => _mapper.Map<LaptopDTO>(l))
+            //    .FirstOrDefaultAsync();
+
+            var laptopDTO = _mapper.Map<LaptopDTO>(Laptop);
 
             return laptopDTO ?? new LaptopDTO();
         }
