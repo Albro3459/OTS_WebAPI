@@ -31,6 +31,8 @@ namespace API_Proj.Features.Controllers
         {
             var regions = await _context.Region
                 .Include(r => r.Offices)
+                .ThenInclude(o => o.Employees)
+                .ThenInclude(e => e.Laptop)
                 .Select(r => _mapper.Map<RegionDTO>(r))
                 .ToListAsync();
 
@@ -43,6 +45,8 @@ namespace API_Proj.Features.Controllers
         {
             var region = await _context.Region
                 .Include(r => r.Offices)
+                .ThenInclude(o => o.Employees)
+                .ThenInclude(e => e.Laptop)
                 .Where(r => r.RegionID == id)
                 .Select(r => _mapper.Map<RegionDTO>(r))
                 .SingleOrDefaultAsync();
@@ -55,38 +59,45 @@ namespace API_Proj.Features.Controllers
             return region;
         }
 
-        // PUT: api/Regions/
-        [HttpPut]
-        public async Task<IActionResult> PutRegion(int id, RegionDTO regionDTO)
+        // PUT: api/Regions/Update/
+        [HttpPut("Update/")]
+        public async Task<IActionResult> UpdateRegion(RegionDTO _region)
         {
-            if (id != regionDTO.RegionID)
+            if (_region == null)
+            { return NotFound("Region can't be null"); }
+
+            var oldRegion = await _context.Region
+                .Include(r => r.Offices)
+                .ThenInclude(o => o.Employees)
+                .ThenInclude(e => e.Laptop)
+                .Where(r => r.RegionID == _region.RegionID).FirstOrDefaultAsync();
+
+            if (oldRegion == null)
+            { return NotFound("Region doesn't exist"); }
+
+
+            _mapper.Map(_region, oldRegion);
+
+
+            if (_region.OfficesIDs != null && _region.OfficesIDs.Count > 0)
             {
-                return BadRequest();
-            }
+                oldRegion.Offices.Clear();
 
-            var region = _mapper.Map<Region>(regionDTO);
-
-            //region.Offices.Select(o => OfficesController.GetOffice(o.OfficeID));
-
-            _context.Entry(region).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RegionExists(id))
+                foreach (var id in _region.OfficesIDs)
                 {
-                    return NotFound();
+                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+                    if (office == null) { continue; }
+                    oldRegion.Offices.Add(office);
                 }
-                else
-                {
-                    throw;
-                }
+
             }
 
-            return NoContent();
+            _context.Update(oldRegion);
+            _context.SaveChanges();
+
+            var regionDTO = _mapper.Map<RegionDTO>(oldRegion);
+
+            return Ok(regionDTO);
         }
 
         // POST: api/Regions

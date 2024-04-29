@@ -11,6 +11,7 @@ using API_Proj.Features.DTO;
 using API_Proj.Features;
 using AutoMapper;
 using System.Security.Cryptography;
+using NuGet.Packaging;
 
 namespace API_Proj.Features.Controllers
 {
@@ -76,50 +77,20 @@ namespace API_Proj.Features.Controllers
             if (oldEmployee == null)
             { return NotFound("Employee doesn't exist"); }
 
-            //oldEmployee.EmployeeName = _employee.EmployeeName;
-            //oldEmployee.JobTitle = _employee.JobTitle;  
-            //oldEmployee.YearsAtCompany = _employee.YearsAtCompany;
-            //oldEmployee.CurrentProjects = _employee.CurrentProjects;
+
             _mapper.Map(_employee, oldEmployee);
 
 
             if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count > 0)
             {
-                var oldOffices = new List<Office>(oldEmployee.Offices.Select(o => _mapper.Map(o, new Office())));
+                oldEmployee.Offices.Clear();
 
-                // remove offices that new Employee doesn't work at
-                foreach (var office in oldEmployee.Offices)
-                {
-                    if (!_employee.OfficesIDs.Contains(office.OfficeID))
-                    {
-                        // need to get the exact object reference to delete
-                        var deleteMe = oldOffices.Where(o => o.OfficeID == office.OfficeID).FirstOrDefault();
-                        oldOffices.Remove(deleteMe);
-                    }
-                }
-
-                // add New Offices
                 foreach (var id in _employee.OfficesIDs)
                 {
-
-                    if (oldOffices.Any(o => o.OfficeID == id)) { continue; }
-
-                    var office = await _context.Office
-                        .Include(o => o.Employees)
-                        .ThenInclude(e => e.Laptop)
-                        .Include(o => o.Employees)
-                        .ThenInclude(e => e.Offices)
-                        .ThenInclude(o => o.Region)
-                        .Include(o => o.Region)
-                        .ThenInclude(r => r.Offices)
-                        .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
-
+                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
                     if (office == null) { continue; }
-
-                    oldOffices.Add(office);
-
+                    oldEmployee.Offices.Add(office);    
                 }
-                oldEmployee.Offices = oldOffices;
 
             }
 
