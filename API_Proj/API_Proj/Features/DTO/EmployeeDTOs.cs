@@ -14,9 +14,9 @@ namespace API_Proj.Features.DTO
 
         public double? YearsAtCompany { get; set; }
 
-        public List<string>? CurrentProjects { get; set; } = new();
+        public List<string>? CurrentProjects { get; set; }
 
-        public List<int>? OfficesIDs { get; set; } = new List<int>();
+        public List<int>? OfficesIDs { get; set; }
 
         public int? LaptopID { get; set; }
 

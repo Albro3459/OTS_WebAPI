@@ -105,6 +105,44 @@ namespace API_Proj.Features.Controllers
 
         }
 
+        //PUT: api/Laptops/Update/{laptopId}/UnassignOwner
+        [HttpPut("Update/{laptopId}/UnassignOwner")]
+        public async Task<IActionResult> UpdateLaptopOwner(int laptopId)
+        {
+            var laptop = await _context.Laptop
+                .Include(l => l.Employee)
+                .Where(l => l.LaptopID == laptopId).FirstOrDefaultAsync();
+
+            if (laptop == null)
+            {
+                return NotFound("Laptop doesn't exist");
+            }
+
+            if (laptop.EmployeeID == null || laptop.Employee == null)
+            {
+                return NotFound("Laptop doesn't have an employee");
+            }
+
+            var employee = await _context.Employee.Where(e => e.EmployeeID == laptop.EmployeeID).FirstOrDefaultAsync();
+
+            if (employee == null)
+            {
+                return NotFound("Employee doesn't exist");
+            }
+
+            laptop.Employee = null;
+            laptop.EmployeeID = null;
+
+            
+            employee.Laptop = null;
+
+            await _context.SaveChangesAsync();
+
+            var returnLaptop = _mapper.Map<LaptopDTO>(laptop);
+            return Ok(returnLaptop);
+
+        }
+
         // POST: api/Laptops/
         [HttpPost("Create")]
         public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _laptop)

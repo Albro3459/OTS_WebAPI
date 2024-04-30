@@ -10,7 +10,7 @@ namespace API_Proj.Features.DTO
 
         public string? RegionName { get; set; }
 
-        public List<int>? OfficesIDs { get; set; } = new List<int>();
+        public List<int>? OfficesIDs { get; set; }
 
     }
 
