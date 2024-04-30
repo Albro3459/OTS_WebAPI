@@ -1,4 +1,8 @@
 # OTS_WebAPI
+#### TO-DO:
+Make a branch where the api uses a sqlite db, so anyone can run it
+
+
 C# ASP.NET Web API for OTS job
 
 Supports Get, Post (Create), Put (Update), and Delete for:
