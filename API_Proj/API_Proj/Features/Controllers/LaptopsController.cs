@@ -30,8 +30,8 @@ namespace API_Proj.Features.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Laptops
-        [HttpGet]
+        // GET: api/Laptops/Get
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop()
         {
             var laptops = await _context.Laptop
@@ -41,8 +41,8 @@ namespace API_Proj.Features.Controllers
             return laptops;
         }
 
-        // GET: api/Laptops/5
-        [HttpGet("{id}")]
+        // GET: api/Laptops/Get/1001
+        [HttpGet("Get/{id}")]
         public async Task<ActionResult<LaptopDTO>> GetLaptop(int id)
         {
             var laptop = await _context.Laptop

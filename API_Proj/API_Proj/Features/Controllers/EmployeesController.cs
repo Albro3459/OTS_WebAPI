@@ -28,8 +28,8 @@ namespace API_Proj.Features.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Employees
-        [HttpGet]
+        // GET: api/Employees/Get
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee()
         {
             var employees = await _context.Employee
@@ -41,8 +41,8 @@ namespace API_Proj.Features.Controllers
             return employees;
         }
 
-        // GET: api/Employees/5
-        [HttpGet("{id}")]
+        // GET: api/Employees/Get/1001
+        [HttpGet("Get/{id}")]
         public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
         {
             var employee = await _context.Employee

@@ -25,8 +25,8 @@ namespace API_Proj.Features.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Regions
-        [HttpGet]
+        // GET: api/Regions/Get
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegion()
         {
             var regions = await _context.Region
@@ -39,8 +39,8 @@ namespace API_Proj.Features.Controllers
             return regions;
         }
 
-        // GET: api/Regions/5
-        [HttpGet("{id}")]
+        // GET: api/Regions/1001
+        [HttpGet("Get/{id}")]
         public async Task<ActionResult<RegionDTO>> GetRegion(int id)
         {
             var region = await _context.Region

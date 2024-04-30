@@ -26,8 +26,8 @@ namespace API_Proj.Features.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Offices
-        [HttpGet]
+        // GET: api/Offices/Get
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
         {
             var offices = await _context.Office
@@ -39,8 +39,8 @@ namespace API_Proj.Features.Controllers
             return offices;
         }
 
-        // GET: api/Offices/5
-        [HttpGet("{id}")]
+        // GET: api/Offices/Get/1001
+        [HttpGet("Get/{id}")]
         public async Task<ActionResult<OfficeDTO>> GetOffice(int id)
         {
             var office = await _context.Office
