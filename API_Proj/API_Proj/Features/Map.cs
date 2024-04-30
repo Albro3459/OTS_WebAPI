@@ -30,13 +30,27 @@ public class Map: Profile
 
         // map back from DTO to Model
 
-        CreateMap<RegionDTO, Region>();
+        CreateMap<RegionDTO, Region>()
+            .ForMember(model => model.RegionName,
+                        opt => opt.Condition(dto => dto.RegionName != null));
 
-        CreateMap<OfficeDTO, Office>();
+        CreateMap<OfficeDTO, Office>()
+            .ForMember(model => model.OfficeName,
+                        opt => opt.Condition(dto => dto.OfficeName != null));
 
-        CreateMap<EmployeeDTO, Employee>();
+        CreateMap<EmployeeDTO, Employee>()
+            .ForMember(model => model.EmployeeName,
+                        opt => opt.Condition(dto => dto.EmployeeName != null))
+            .ForMember(model => model.JobTitle,
+                        opt => opt.Condition(dto => dto.JobTitle != null))
+            .ForMember(model => model.YearsAtCompany,
+                        opt => opt.Condition(dto => dto.YearsAtCompany != null))
+            .ForMember(model => model.CurrentProjects,
+                        opt => opt.Condition(dto => dto.CurrentProjects != null));
 
-        CreateMap<LaptopDTO, Laptop>();
+        CreateMap<LaptopDTO, Laptop>()
+            .ForMember(model => model.LaptopName,
+                        opt => opt.Condition(dto => dto.LaptopName != null));
 
 
         // map back from CreationDTO to Model

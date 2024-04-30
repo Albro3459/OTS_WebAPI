@@ -9,8 +9,7 @@ namespace API_Proj.Features.DTO
         [Required]
         public int OfficeID { get; set; }
 
-        [Required]
-        public string OfficeName { get; set; } = string.Empty;
+        public string? OfficeName { get; set; }
 
         public int? RegionID { get; set; }
 

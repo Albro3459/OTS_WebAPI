@@ -8,8 +8,7 @@ namespace API_Proj.Features.DTO
         [Required]
         public int EmployeeID { get; set; }
 
-        [Required]
-        public string EmployeeName { get; set; } = string.Empty;
+        public string? EmployeeName { get; set; }
 
         public string? JobTitle { get; set; }
 

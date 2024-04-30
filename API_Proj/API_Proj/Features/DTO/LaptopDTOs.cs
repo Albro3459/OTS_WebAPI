@@ -9,8 +9,7 @@ namespace API_Proj.Features.DTO
         [Required]
         public int LaptopID { get; set; }
 
-        [Required]
-        public string LaptopName { get; set; } = string.Empty;
+        public string? LaptopName { get; set; }
 
         public int? EmployeeID { get; set; }
 
