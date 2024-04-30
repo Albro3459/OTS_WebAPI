@@ -105,13 +105,13 @@ namespace API_Proj.Features.Controllers
 
         }
 
-        //PUT: api/Laptops/Update/{laptopId}/UnassignOwner
-        [HttpPut("Update/{laptopId}/UnassignOwner")]
-        public async Task<IActionResult> UpdateLaptopOwner(int laptopId)
+        //PUT: api/Laptops/Update/{laptopID}/UnassignOwner
+        [HttpPut("Update/{laptopID}/UnassignOwner")]
+        public async Task<IActionResult> UnassignOwner(int laptopID)
         {
             var laptop = await _context.Laptop
                 .Include(l => l.Employee)
-                .Where(l => l.LaptopID == laptopId).FirstOrDefaultAsync();
+                .Where(l => l.LaptopID == laptopID).FirstOrDefaultAsync();
 
             if (laptop == null)
             {
@@ -138,8 +138,8 @@ namespace API_Proj.Features.Controllers
 
             await _context.SaveChangesAsync();
 
-            var returnLaptop = _mapper.Map<LaptopDTO>(laptop);
-            return Ok(returnLaptop);
+            var laptopDTO = _mapper.Map<LaptopDTO>(laptop);
+            return Ok(laptopDTO);
 
         }
 

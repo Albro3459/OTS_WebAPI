@@ -116,6 +116,53 @@ namespace API_Proj.Features.Controllers
             return Ok(officeDTO);
         }
 
+        //PUT: api/Offices/Update/{officeID}/UnassignRegion
+        [HttpPut("Update/{officeID}/UnassignRegion")]
+        public async Task<IActionResult> UnassignRegion(int officeID)
+        {
+            var office = await _context.Office
+                .Include(o => o.Employees)
+                .ThenInclude(e => e.Laptop)
+                .Include(o => o.Employees)
+                .ThenInclude(e => e.Offices)
+                .ThenInclude(o => o.Region)
+                .Include(o => o.Region)
+                .ThenInclude(r => r.Offices)
+                .Where(o => o.OfficeID == officeID).FirstOrDefaultAsync();
+
+            if (office == null)
+            {
+                return NotFound("Office doesn't exist");
+            }
+
+            if (office.RegionID == null || office.Region == null)
+            {
+                return NotFound("Office doesn't have an region");
+            }
+
+            var region = await _context.Region.Where(r => r.RegionID == office.RegionID).FirstOrDefaultAsync();
+
+            if (region == null)
+            {
+                return NotFound("Region doesn't exist");
+            }
+
+            office.Region = null;
+            office.RegionID = null;
+
+            if (region.Offices != null && region.Offices.Count > 0)
+            {
+                region.Offices.Remove(office);
+            }
+
+
+            await _context.SaveChangesAsync();
+
+            var officeDTO = _mapper.Map<OfficeDTO>(office);
+            return Ok(officeDTO);
+
+        }
+
         // POST: api/Offices
         [HttpPost("Create")]
         public async Task<ActionResult<OfficeDTO>> CreateOffice(OfficeForCreationDTO _office)

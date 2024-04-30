@@ -36,7 +36,9 @@ public class Map: Profile
 
         CreateMap<OfficeDTO, Office>()
             .ForMember(model => model.OfficeName,
-                        opt => opt.Condition(dto => dto.OfficeName != null));
+                        opt => opt.Condition(dto => dto.OfficeName != null))
+            .ForMember(model => model.RegionID,
+                        opt => opt.Condition(dto => dto.RegionID != null));
 
         CreateMap<EmployeeDTO, Employee>()
             .ForMember(model => model.EmployeeName,
@@ -50,9 +52,9 @@ public class Map: Profile
 
         CreateMap<LaptopDTO, Laptop>()
             .ForMember(model => model.LaptopName,
-                        opt => opt.Condition(dto => dto.LaptopName != null));
-            //.ForMember(model => model.EmployeeID,
-            //            opt => opt.Condition(dto => dto.EmployeeID != null));
+                        opt => opt.Condition(dto => dto.LaptopName != null))
+            .ForMember(model => model.EmployeeID,
+                        opt => opt.Condition(dto => dto.EmployeeID != null));
 
 
         // map back from CreationDTO to Model
