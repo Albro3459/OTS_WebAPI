@@ -31,7 +31,8 @@ namespace API_Proj.Features.Controllers
         public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
         {
             var offices = await _context.Office
-                .Include(o => o.Employees)
+                .Include(o => o.Employees).ThenInclude(e => e.Laptop)
+                .Include(o => o.Region)
                 .Select(o => _mapper.Map<OfficeDTO>(o))
                 .ToListAsync();
 
@@ -44,6 +45,7 @@ namespace API_Proj.Features.Controllers
         {
             var office = await _context.Office
                 .Include(o => o.Employees)
+                .Include(o => o.Region)
                 .Where(o => o.OfficeID == id)
                 .Select(o => _mapper.Map<OfficeDTO>(o))
                 .SingleOrDefaultAsync();
@@ -107,7 +109,7 @@ namespace API_Proj.Features.Controllers
             }
 
             _context.Update(oldOffice);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var officeDTO = _mapper.Map<OfficeDTO>(oldOffice);
 
@@ -189,17 +191,19 @@ namespace API_Proj.Features.Controllers
 
 
 
-        // DELETE: api/Offices/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Offices/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteOffice(int id)
         {
             var office = await _context.Office.FindAsync(id);
             if (office == null)
             {
-                return NotFound();
+                return NotFound("Office doesn't exist");
             }
 
-            _context.Office.Remove(office);
+            office.IsDeleted = true;
+            _context.Update(office);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

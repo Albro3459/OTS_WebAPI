@@ -38,6 +38,9 @@ namespace API_Proj.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("JobTitle")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -55,6 +58,7 @@ namespace API_Proj.Migrations
                             EmployeeID = 1001,
                             CurrentProjects = "[\"Api Project\"]",
                             EmployeeName = "Alex Brodsky",
+                            IsDeleted = false,
                             JobTitle = "Student Developer",
                             YearsAtCompany = 0.5
                         },
@@ -63,6 +67,7 @@ namespace API_Proj.Migrations
                             EmployeeID = 1002,
                             CurrentProjects = "[\"Twidling Thumbs\"]",
                             EmployeeName = "Hoa Nguyen",
+                            IsDeleted = false,
                             JobTitle = "Student Developer",
                             YearsAtCompany = 0.5
                         });
@@ -78,6 +83,9 @@ namespace API_Proj.Migrations
 
                     b.Property<int?>("EmployeeID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LaptopName")
                         .IsRequired()
@@ -97,12 +105,14 @@ namespace API_Proj.Migrations
                         {
                             LaptopID = 1001,
                             EmployeeID = 1001,
+                            IsDeleted = false,
                             LaptopName = "Brodsky's Laptop"
                         },
                         new
                         {
                             LaptopID = 1002,
                             EmployeeID = 1002,
+                            IsDeleted = false,
                             LaptopName = "Hoa's Laptop"
                         });
                 });
@@ -114,6 +124,9 @@ namespace API_Proj.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OfficeID"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("OfficeName")
                         .IsRequired()
@@ -133,12 +146,14 @@ namespace API_Proj.Migrations
                         new
                         {
                             OfficeID = 1001,
+                            IsDeleted = false,
                             OfficeName = "Galvez Building",
                             RegionID = 1001
                         },
                         new
                         {
                             OfficeID = 1002,
+                            IsDeleted = false,
                             OfficeName = "Deloitte Austin",
                             RegionID = 1002
                         });
@@ -151,6 +166,9 @@ namespace API_Proj.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RegionID"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("RegionName")
                         .IsRequired()
@@ -165,11 +183,13 @@ namespace API_Proj.Migrations
                         new
                         {
                             RegionID = 1001,
+                            IsDeleted = false,
                             RegionName = "South West"
                         },
                         new
                         {
                             RegionID = 1002,
+                            IsDeleted = false,
                             RegionName = "South"
                         });
                 });

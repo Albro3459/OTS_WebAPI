@@ -7,45 +7,45 @@
 namespace API_Proj.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedInitial : Migration
+    public partial class FirstSeed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
                 table: "Employee",
-                columns: new[] { "EmployeeID", "CurrentProjects", "EmployeeName", "JobTitle", "YearsAtCompany" },
+                columns: new[] { "EmployeeID", "CurrentProjects", "EmployeeName", "IsDeleted", "JobTitle", "YearsAtCompany" },
                 values: new object[,]
                 {
-                    { 1001, "[\"Api Project\"]", "Alex Brodsky", "Student Developer", 0.5 },
-                    { 1002, "[\"Twidling Thumbs\"]", "Hoa Nguyen", "Student Developer", 0.5 }
+                    { 1001, "[\"Api Project\"]", "Alex Brodsky", false, "Student Developer", 0.5 },
+                    { 1002, "[\"Twidling Thumbs\"]", "Hoa Nguyen", false, "Student Developer", 0.5 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Region",
-                columns: new[] { "RegionID", "RegionName" },
+                columns: new[] { "RegionID", "IsDeleted", "RegionName" },
                 values: new object[,]
                 {
-                    { 1001, "South West" },
-                    { 1002, "South" }
+                    { 1001, false, "South West" },
+                    { 1002, false, "South" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Laptop",
-                columns: new[] { "LaptopID", "EmployeeID", "LaptopName" },
+                columns: new[] { "LaptopID", "EmployeeID", "IsDeleted", "LaptopName" },
                 values: new object[,]
                 {
-                    { 1001, 1001, "Brodsky's Laptop" },
-                    { 1002, 1002, "Hoa's Laptop" }
+                    { 1001, 1001, false, "Brodsky's Laptop" },
+                    { 1002, 1002, false, "Hoa's Laptop" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Office",
-                columns: new[] { "OfficeID", "OfficeName", "RegionID" },
+                columns: new[] { "OfficeID", "IsDeleted", "OfficeName", "RegionID" },
                 values: new object[,]
                 {
-                    { 1001, "Galvez Building", 1001 },
-                    { 1002, "Deloitte Austin", 1002 }
+                    { 1001, false, "Galvez Building", 1001 },
+                    { 1002, false, "Deloitte Austin", 1002 }
                 });
 
             migrationBuilder.InsertData(

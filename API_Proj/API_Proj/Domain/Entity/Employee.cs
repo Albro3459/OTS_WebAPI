@@ -23,5 +23,7 @@ namespace API_Proj.Domain.Entity
 
         public Laptop? Laptop { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
     }
 }

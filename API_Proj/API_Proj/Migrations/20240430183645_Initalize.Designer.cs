@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Proj.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20240425184422_SeedInitial")]
-    partial class SeedInitial
+    [Migration("20240430183645_Initalize")]
+    partial class Initalize
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,9 @@ namespace API_Proj.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("JobTitle")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -51,24 +54,6 @@ namespace API_Proj.Migrations
                     b.HasKey("EmployeeID");
 
                     b.ToTable("Employee");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeID = 1001,
-                            CurrentProjects = "[\"Api Project\"]",
-                            EmployeeName = "Alex Brodsky",
-                            JobTitle = "Student Developer",
-                            YearsAtCompany = 0.5
-                        },
-                        new
-                        {
-                            EmployeeID = 1002,
-                            CurrentProjects = "[\"Twidling Thumbs\"]",
-                            EmployeeName = "Hoa Nguyen",
-                            JobTitle = "Student Developer",
-                            YearsAtCompany = 0.5
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Laptop", b =>
@@ -82,6 +67,9 @@ namespace API_Proj.Migrations
                     b.Property<int?>("EmployeeID")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LaptopName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -94,20 +82,6 @@ namespace API_Proj.Migrations
                         .HasFilter("[EmployeeID] IS NOT NULL");
 
                     b.ToTable("Laptop");
-
-                    b.HasData(
-                        new
-                        {
-                            LaptopID = 1001,
-                            EmployeeID = 1001,
-                            LaptopName = "Brodsky's Laptop"
-                        },
-                        new
-                        {
-                            LaptopID = 1002,
-                            EmployeeID = 1002,
-                            LaptopName = "Hoa's Laptop"
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Office", b =>
@@ -117,6 +91,9 @@ namespace API_Proj.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OfficeID"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("OfficeName")
                         .IsRequired()
@@ -131,20 +108,6 @@ namespace API_Proj.Migrations
                     b.HasIndex("RegionID");
 
                     b.ToTable("Office");
-
-                    b.HasData(
-                        new
-                        {
-                            OfficeID = 1001,
-                            OfficeName = "Galvez Building",
-                            RegionID = 1001
-                        },
-                        new
-                        {
-                            OfficeID = 1002,
-                            OfficeName = "Deloitte Austin",
-                            RegionID = 1002
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Region", b =>
@@ -155,6 +118,9 @@ namespace API_Proj.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RegionID"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("RegionName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -163,18 +129,6 @@ namespace API_Proj.Migrations
                     b.HasKey("RegionID");
 
                     b.ToTable("Region");
-
-                    b.HasData(
-                        new
-                        {
-                            RegionID = 1001,
-                            RegionName = "South West"
-                        },
-                        new
-                        {
-                            RegionID = 1002,
-                            RegionName = "South"
-                        });
                 });
 
             modelBuilder.Entity("OfficeEmployee", b =>
@@ -190,23 +144,6 @@ namespace API_Proj.Migrations
                     b.HasIndex("EmployeesID");
 
                     b.ToTable("OfficeEmployee");
-
-                    b.HasData(
-                        new
-                        {
-                            OfficesID = 1001,
-                            EmployeesID = 1001
-                        },
-                        new
-                        {
-                            OfficesID = 1002,
-                            EmployeesID = 1001
-                        },
-                        new
-                        {
-                            OfficesID = 1001,
-                            EmployeesID = 1002
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Laptop", b =>

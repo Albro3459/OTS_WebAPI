@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.JsonPatch;
+using System.Drawing;
 
 namespace API_Proj.Features.Controllers
 {
@@ -97,7 +98,7 @@ namespace API_Proj.Features.Controllers
             }
 
             _context.Update(oldLaptop);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var returnLaptop = _mapper.Map<LaptopDTO>(oldLaptop);
             return Ok(returnLaptop);
@@ -150,17 +151,19 @@ namespace API_Proj.Features.Controllers
             return laptopDTO ?? new LaptopDTO();
         }
 
-        // DELETE: api/Laptops/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Laptops/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteLaptop(int id)
         {
             var laptop = await _context.Laptop.FindAsync(id);
             if (laptop == null)
             {
-                return NotFound();
+                return NotFound("Laptop doesn't exist");
             }
 
-            _context.Laptop.Remove(laptop);
+
+            laptop.IsDeleted = true;
+            _context.Update(laptop);
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -14,5 +14,6 @@ namespace API_Proj.Domain.Entity
 
         public ICollection<Office>? Offices { get; set; } = new List<Office>();
 
+        public bool IsDeleted { get; set; } = false;
     }
 }

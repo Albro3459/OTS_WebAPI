@@ -18,5 +18,7 @@ namespace API_Proj.Domain.Entity
 
         public Employee? Employee { get; set; } = null!;
 
+        public bool IsDeleted { get; set; } = false;
+
     }
 }

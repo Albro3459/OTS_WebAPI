@@ -5,7 +5,7 @@
 namespace API_Proj.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalCreate : Migration
+    public partial class Initalize : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,8 @@ namespace API_Proj.Migrations
                     EmployeeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     JobTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     YearsAtCompany = table.Column<double>(type: "float", nullable: true),
-                    CurrentProjects = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CurrentProjects = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +33,8 @@ namespace API_Proj.Migrations
                 {
                     RegionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RegionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    RegionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +48,8 @@ namespace API_Proj.Migrations
                     LaptopID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LaptopName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    EmployeeID = table.Column<int>(type: "int", nullable: true)
+                    EmployeeID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,7 +68,8 @@ namespace API_Proj.Migrations
                     OfficeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OfficeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    RegionID = table.Column<int>(type: "int", nullable: true)
+                    RegionID = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

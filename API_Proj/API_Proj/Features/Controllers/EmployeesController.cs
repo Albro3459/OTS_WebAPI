@@ -108,7 +108,7 @@ namespace API_Proj.Features.Controllers
             }
 
             _context.Update(oldEmployee);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var employeeDTO = _mapper.Map<EmployeeDTO>(oldEmployee);
 
@@ -131,8 +131,6 @@ namespace API_Proj.Features.Controllers
             {
 
                 var laptop = await _context.Laptop
-                    .Include(l => l.Employee)
-                    .ThenInclude(e => e.Laptop)
                     .Include(l => l.Employee)
                     .ThenInclude(e => e.Offices)
                     .ThenInclude(o => o.Region)
@@ -190,17 +188,28 @@ namespace API_Proj.Features.Controllers
             return employeeDTO ?? new EmployeeDTO();
         }
 
-        // DELETE: api/Employees/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Employees/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             var employee = await _context.Employee.FindAsync(id);
-            if (employee == null)
+            if (employee == null || employee.IsDeleted)
             {
-                return NotFound();
+                return NotFound("Employee doesn't exist");
             }
 
-            _context.Employee.Remove(employee);
+
+            employee.IsDeleted = true;
+            var laptop = await _context.Laptop.Where(l => l.EmployeeID == id).FirstOrDefaultAsync();
+            if (laptop != null)
+            {
+                laptop.Employee = null;
+                laptop.EmployeeID = null;
+            }
+
+            //_context.Update(employee);
+
+
             await _context.SaveChangesAsync();
 
             return NoContent();

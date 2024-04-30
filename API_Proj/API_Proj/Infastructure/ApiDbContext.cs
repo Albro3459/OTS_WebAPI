@@ -43,6 +43,14 @@ namespace API_Proj.Infastructure
                 .HasForeignKey<Laptop>(l => l.EmployeeID);
 
 
+            modelBuilder.Entity<Laptop>().HasQueryFilter(l => !l.IsDeleted);
+            modelBuilder.Entity<Employee>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Office>().HasQueryFilter(o => !o.IsDeleted);
+            modelBuilder.Entity<Region>().HasQueryFilter(r => !r.IsDeleted);
+
+
+
+
             modelBuilder.Entity<Region>().HasData(new Region { RegionID = 1001, RegionName = "South West" },
                                                     new Region { RegionID = 1002, RegionName = "South" });
 
@@ -59,6 +67,7 @@ namespace API_Proj.Infastructure
 
             modelBuilder.Entity<Laptop>().HasData(new Laptop { LaptopID = 1001, LaptopName = "Brodsky's Laptop", EmployeeID = 1001 },
                                                     new Laptop { LaptopID = 1002, LaptopName = "Hoa's Laptop", EmployeeID = 1002 });
+
 
         }
 

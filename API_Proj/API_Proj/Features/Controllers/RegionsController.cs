@@ -93,7 +93,7 @@ namespace API_Proj.Features.Controllers
             }
 
             _context.Update(oldRegion);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var regionDTO = _mapper.Map<RegionDTO>(oldRegion);
 
@@ -155,17 +155,30 @@ namespace API_Proj.Features.Controllers
         }
 
 
-        // DELETE: api/Regions/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Regions/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteRegion(int id)
         {
             var region = await _context.Region.FindAsync(id);
             if (region == null)
             {
-                return NotFound();
+                return NotFound("Region doesn't exist");
             }
 
-            _context.Region.Remove(region);
+            region.IsDeleted = true;
+
+            var offices = await _context.Office.Where(o => o.RegionID == id).ToListAsync();
+            if (offices != null)
+            {
+                foreach (var o in offices)
+                {
+                    o.Region = null;
+                    o.RegionID = null;
+                }
+            }
+
+            //_context.Update(region);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
