@@ -82,7 +82,7 @@ namespace API_Proj.Features.Controllers
             _mapper.Map(_office, oldOffice);
 
 
-            if (_office.EmployeesIDs != null && _office.EmployeesIDs.Count > 0)
+            if (_office.EmployeesIDs != null && _office.EmployeesIDs.Count >= 0)
             { 
                 oldOffice.Employees.Clear();
 
@@ -178,11 +178,6 @@ namespace API_Proj.Features.Controllers
 
             _context.Office.Add(Office);
             await _context.SaveChangesAsync();
-
-            //var officeDTO = await _context.Office
-            //    .Where(o => o.OfficeID == Office.OfficeID)
-            //    .Select(o => _mapper.Map<OfficeDTO>(o))
-            //    .FirstOrDefaultAsync();
 
             var officeDTO = _mapper.Map<OfficeDTO>(Office);
 

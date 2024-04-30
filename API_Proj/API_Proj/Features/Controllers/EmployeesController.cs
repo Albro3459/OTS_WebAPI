@@ -81,7 +81,7 @@ namespace API_Proj.Features.Controllers
             _mapper.Map(_employee, oldEmployee);
 
 
-            if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count > 0)
+            if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count >= 0)
             {
                 oldEmployee.Offices.Clear();
 
@@ -89,9 +89,9 @@ namespace API_Proj.Features.Controllers
                 {
                     var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
                     if (office == null) { continue; }
-                    oldEmployee.Offices.Add(office);    
+                    oldEmployee.Offices.Add(office);
                 }
-
+                
             }
 
             if (_employee.LaptopID != null)

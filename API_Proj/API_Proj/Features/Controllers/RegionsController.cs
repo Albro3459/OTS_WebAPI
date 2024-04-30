@@ -79,7 +79,7 @@ namespace API_Proj.Features.Controllers
             _mapper.Map(_region, oldRegion);
 
 
-            if (_region.OfficesIDs != null && _region.OfficesIDs.Count > 0)
+            if (_region.OfficesIDs != null && _region.OfficesIDs.Count >= 0)
             {
                 oldRegion.Offices.Clear();
 
