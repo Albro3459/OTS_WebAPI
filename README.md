@@ -1,7 +1,4 @@
 # OTS_WebAPI
-#### TO-DO:
-Make a branch where the api uses a sqlite db, so anyone can run it
-
 
 C# ASP.NET Web API for OTS job
 
@@ -16,20 +13,18 @@ Supports Get, Post (Create), Put (Update), and Delete for:
 
 
 ### How to Run:
-Really only works on Visual Studio on Windows because it uses LocalDB
+I have only tested on VScode
 
-You need the .NET 8 sdk to run it
+I use the SQLtools extension with SQLtools SQLite extension, but I don't think that is needed
+
+You need the .NET 8 sdk and EF Core installed in your cli to run it 
 
 - Clone the proj
 
-- In Package Manager Console run:
-  - ```sh
-    Update-Database
-    ```
-
 - To run:
   - ```sh
-    cd {projectRoot}/API_Proj/API_Proj
+    dotnet ef database update
+    cd {workspaceFolder:OTS_WebAPI}/API_Proj/API_Proj
     dotnet run
     ```
 
