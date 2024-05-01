@@ -25,9 +25,9 @@ You need the .NET 8 sdk to run it
 
 - If you are not on Visual Studio on Windows
   - Switch to the universal branch and read its README
-  ```sh
-  git checkout universal
-  ```
+  - ```sh
+    git checkout universal
+    ```
 
 - Otherwise, in Package Manager Console run:
   - ```sh
