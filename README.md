@@ -36,7 +36,7 @@ You need the .NET 8 sdk to run it
 
 - To run:
   - ```sh
-    cd {projectRoot}/API_Proj/API_Proj
+    cd {workspaceFolder:OTS_WebAPI}/API_Proj/API_Proj
     dotnet run
     ```
 
