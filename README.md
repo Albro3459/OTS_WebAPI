@@ -1,7 +1,4 @@
 # OTS_WebAPI
-#### TO-DO:
-Make a branch where the api uses a sqlite db, so anyone can run it
-
 
 C# ASP.NET Web API for OTS job
 
@@ -15,14 +12,24 @@ Supports Get, Post (Create), Put (Update), and Delete for:
 - Employees 1 <-> 1 Laptop
 
 
-### How to Run:
-Really only works on Visual Studio on Windows because it uses LocalDB
+## How to Run:
+### Use the "universal" branch!!
+
+Universal uses SQLite, so with .Net 8 and EF core it should work on anyone's computer
+
+This branch really only works on Visual Studio on Windows because it uses LocalDB
 
 You need the .NET 8 sdk to run it
 
 - Clone the proj
 
-- In Package Manager Console run:
+- If you are not on Visual Studio on Windows
+  - Switch to the universal branch and read its README
+  ```sh
+  git checkout universal
+  ```
+
+- Otherwise, in Package Manager Console run:
   - ```sh
     Update-Database
     ```
