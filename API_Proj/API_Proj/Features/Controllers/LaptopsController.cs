@@ -14,6 +14,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Drawing;
+using API_Proj.Features.Request.Laptop;
+using MediatR;
 
 namespace API_Proj.Features.Controllers
 {
@@ -22,24 +24,34 @@ namespace API_Proj.Features.Controllers
     public class LaptopsController : ControllerBase
     {
         private readonly ApiDbContext _context;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public LaptopsController(ApiDbContext context, IMapper mapper)
+        public LaptopsController(ApiDbContext context, IMediator mediator, IMapper mapper)
         {
             _context = context;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
         // GET: api/Laptops/Get
+        //[HttpGet("Get")]
+        //public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop()
+        //{
+        //    var laptops = await _context.Laptop
+        //        .Select(l => _mapper.Map<LaptopDTO>(l))
+        //        .ToListAsync();
+
+        //    return laptops;
+        //}
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop()
         {
-            var laptops = await _context.Laptop
-                .Select(l => _mapper.Map<LaptopDTO>(l))
-                .ToListAsync();
+            var result = await _mediator.Send(new GetLaptop.Query());
 
-            return laptops;
+            return result;
         }
+
 
         // GET: api/Laptops/Get/1001
         [HttpGet("Get/{id}")]
