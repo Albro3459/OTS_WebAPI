@@ -5,7 +5,7 @@
 namespace API_Proj.Migrations
 {
     /// <inheritdoc />
-    public partial class Initalize : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,13 +14,13 @@ namespace API_Proj.Migrations
                 name: "Employee",
                 columns: table => new
                 {
-                    EmployeeID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    JobTitle = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    YearsAtCompany = table.Column<double>(type: "float", nullable: true),
-                    CurrentProjects = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    EmployeeID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    EmployeeName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    JobTitle = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    YearsAtCompany = table.Column<double>(type: "REAL", nullable: true),
+                    CurrentProjects = table.Column<string>(type: "TEXT", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,10 +31,10 @@ namespace API_Proj.Migrations
                 name: "Region",
                 columns: table => new
                 {
-                    RegionID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RegionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    RegionID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RegionName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,11 +45,11 @@ namespace API_Proj.Migrations
                 name: "Laptop",
                 columns: table => new
                 {
-                    LaptopID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LaptopName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    EmployeeID = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    LaptopID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    LaptopName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    EmployeeID = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,11 +65,11 @@ namespace API_Proj.Migrations
                 name: "Office",
                 columns: table => new
                 {
-                    OfficeID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OfficeName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    RegionID = table.Column<int>(type: "int", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    OfficeID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OfficeName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    RegionID = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,8 +85,8 @@ namespace API_Proj.Migrations
                 name: "OfficeEmployee",
                 columns: table => new
                 {
-                    OfficesID = table.Column<int>(type: "int", nullable: false),
-                    EmployeesID = table.Column<int>(type: "int", nullable: false)
+                    OfficesID = table.Column<int>(type: "INTEGER", nullable: false),
+                    EmployeesID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,8 +109,7 @@ namespace API_Proj.Migrations
                 name: "IX_Laptop_EmployeeID",
                 table: "Laptop",
                 column: "EmployeeID",
-                unique: true,
-                filter: "[EmployeeID] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Office_RegionID",

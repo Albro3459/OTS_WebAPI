@@ -14,7 +14,8 @@ using API_Proj.Features;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApiDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Development")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("Development")));
+
 
 // Add services to the container.
 

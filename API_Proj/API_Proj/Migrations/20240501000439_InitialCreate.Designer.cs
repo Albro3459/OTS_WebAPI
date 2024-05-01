@@ -3,6 +3,7 @@ using System;
 using API_Proj.Infastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API_Proj.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240501000439_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
@@ -44,26 +47,6 @@ namespace API_Proj.Migrations
                     b.HasKey("EmployeeID");
 
                     b.ToTable("Employee");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeID = 1001,
-                            CurrentProjects = "[\"Api Project\"]",
-                            EmployeeName = "Alex Brodsky",
-                            IsDeleted = false,
-                            JobTitle = "Student Developer",
-                            YearsAtCompany = 0.5
-                        },
-                        new
-                        {
-                            EmployeeID = 1002,
-                            CurrentProjects = "[\"Twidling Thumbs\"]",
-                            EmployeeName = "Hoa Nguyen",
-                            IsDeleted = false,
-                            JobTitle = "Student Developer",
-                            YearsAtCompany = 0.5
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Laptop", b =>
@@ -89,22 +72,6 @@ namespace API_Proj.Migrations
                         .IsUnique();
 
                     b.ToTable("Laptop");
-
-                    b.HasData(
-                        new
-                        {
-                            LaptopID = 1001,
-                            EmployeeID = 1001,
-                            IsDeleted = false,
-                            LaptopName = "Brodsky's Laptop"
-                        },
-                        new
-                        {
-                            LaptopID = 1002,
-                            EmployeeID = 1002,
-                            IsDeleted = false,
-                            LaptopName = "Hoa's Laptop"
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Office", b =>
@@ -129,22 +96,6 @@ namespace API_Proj.Migrations
                     b.HasIndex("RegionID");
 
                     b.ToTable("Office");
-
-                    b.HasData(
-                        new
-                        {
-                            OfficeID = 1001,
-                            IsDeleted = false,
-                            OfficeName = "Galvez Building",
-                            RegionID = 1001
-                        },
-                        new
-                        {
-                            OfficeID = 1002,
-                            IsDeleted = false,
-                            OfficeName = "Deloitte Austin",
-                            RegionID = 1002
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Region", b =>
@@ -164,20 +115,6 @@ namespace API_Proj.Migrations
                     b.HasKey("RegionID");
 
                     b.ToTable("Region");
-
-                    b.HasData(
-                        new
-                        {
-                            RegionID = 1001,
-                            IsDeleted = false,
-                            RegionName = "South West"
-                        },
-                        new
-                        {
-                            RegionID = 1002,
-                            IsDeleted = false,
-                            RegionName = "South"
-                        });
                 });
 
             modelBuilder.Entity("OfficeEmployee", b =>
@@ -193,23 +130,6 @@ namespace API_Proj.Migrations
                     b.HasIndex("EmployeesID");
 
                     b.ToTable("OfficeEmployee");
-
-                    b.HasData(
-                        new
-                        {
-                            OfficesID = 1001,
-                            EmployeesID = 1001
-                        },
-                        new
-                        {
-                            OfficesID = 1002,
-                            EmployeesID = 1001
-                        },
-                        new
-                        {
-                            OfficesID = 1001,
-                            EmployeesID = 1002
-                        });
                 });
 
             modelBuilder.Entity("API_Proj.Domain.Entity.Laptop", b =>

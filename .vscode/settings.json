@@ -1,17 +1,10 @@
 {
     "sqltools.connections": [
         {
-            "mssqlOptions": {
-                "appName": "SQLTools",
-                "useUTC": true,
-                "encrypt": true
-            },
             "previewLimit": 50,
-            "server": "localhost",
-            "driver": "MSSQL",
+            "driver": "SQLite",
             "name": "API_DB",
-            "database": "API_DB",
-            "connectString": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=API_DB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"
+            "database": "${workspaceFolder:OTS_WebAPI}/API_Proj/API_Proj/SQL/API_DB.db"
         }
     ]
 }
