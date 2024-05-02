@@ -9,6 +9,8 @@ using API_Proj.Domain.Entity;
 using API_Proj.Features.DTO;
 using API_Proj.Infastructure;
 using AutoMapper;
+using MediatR;
+using API_Proj.Features.Request.Region;
 
 namespace API_Proj.Features.Controllers
 {
@@ -18,23 +20,32 @@ namespace API_Proj.Features.Controllers
     {
         private readonly ApiDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public RegionsController(ApiDbContext context, IMapper mapper)
+        public RegionsController(ApiDbContext context, IMapper mapper, IMediator mediator)
         {
             _context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         // GET: api/Regions/Get
         [HttpGet("Get")]
+        //public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegion()
+        //{
+        //    var regions = await _context.Region
+        //        .Include(r => r.Offices)
+        //        .ThenInclude(o => o.Employees)
+        //        .ThenInclude(e => e.Laptop)
+        //        .Select(r => _mapper.Map<RegionDTO>(r))
+        //        .ToListAsync();
+
+        //    return regions;
+        //}
+
         public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegion()
         {
-            var regions = await _context.Region
-                .Include(r => r.Offices)
-                .ThenInclude(o => o.Employees)
-                .ThenInclude(e => e.Laptop)
-                .Select(r => _mapper.Map<RegionDTO>(r))
-                .ToListAsync();
+            var regions = await _mediator.Send(new GetRegion.Query());
 
             return regions;
         }

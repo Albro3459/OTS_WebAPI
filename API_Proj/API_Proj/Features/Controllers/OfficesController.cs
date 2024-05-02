@@ -10,6 +10,8 @@ using API_Proj.Infastructure;
 using AutoMapper;
 using API_Proj.Features.DTO;
 using System.Drawing;
+using MediatR;
+using API_Proj.Features.Request.Office;
 
 namespace API_Proj.Features.Controllers
 {
@@ -19,25 +21,35 @@ namespace API_Proj.Features.Controllers
     {
         private readonly ApiDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public OfficesController(ApiDbContext context, IMapper mapper)
+        public OfficesController(ApiDbContext context, IMapper mapper, IMediator mediator)
         {
             _context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         // GET: api/Offices/Get
         [HttpGet("Get")]
+        //public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
+        //{
+        //var offices = await _context.Office
+        //        .Include(o => o.Employees).ThenInclude(e => e.Laptop)
+        //        .Include(o => o.Region)
+        //        .Select(o => _mapper.Map<OfficeDTO>(o))
+        //        .ToListAsync();
+
+        //    return offices;
+        //}
+
         public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
         {
-            var offices = await _context.Office
-                .Include(o => o.Employees).ThenInclude(e => e.Laptop)
-                .Include(o => o.Region)
-                .Select(o => _mapper.Map<OfficeDTO>(o))
-                .ToListAsync();
+            var offices = await _mediator.Send(new GetOffice.Query());
 
             return offices;
         }
+
 
         // GET: api/Offices/Get/1001
         [HttpGet("Get/{id}")]

@@ -12,6 +12,8 @@ using API_Proj.Features;
 using AutoMapper;
 using System.Security.Cryptography;
 using NuGet.Packaging;
+using MediatR;
+using API_Proj.Features.Request.Employee;
 
 namespace API_Proj.Features.Controllers
 {
@@ -21,22 +23,32 @@ namespace API_Proj.Features.Controllers
     {
         private readonly ApiDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public EmployeesController(ApiDbContext context, IMapper mapper)
+        public EmployeesController(ApiDbContext context, IMapper mapper, IMediator mediator)
         {
             _context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         // GET: api/Employees/Get
+        //[HttpGet("Get")]
+        //public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee()
+        //{
+        //var employees = await _context.Employee
+        //    .Include(e => e.Offices)
+        //    .Include(e => e.Laptop)
+        //    .Select(e => _mapper.Map<EmployeeDTO>(e))
+        //    .ToListAsync();
+
+        //    return employees;
+        //}
+
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee()
         {
-            var employees = await _context.Employee
-                .Include(e => e.Offices)
-                .Include(e => e.Laptop)
-                .Select(e => _mapper.Map<EmployeeDTO>(e))
-                .ToListAsync();
+            var employees = await _mediator.Send(new GetEmployee.Query());
 
             return employees;
         }

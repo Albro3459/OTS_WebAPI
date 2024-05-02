@@ -35,40 +35,40 @@ namespace API_Proj.Features.Controllers
         }
 
         // GET: api/Laptops/Get
-        //[HttpGet("Get")]
-        //public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop()
-        //{
-        //    var laptops = await _context.Laptop
-        //        .Select(l => _mapper.Map<LaptopDTO>(l))
-        //        .ToListAsync();
-
-        //    return laptops;
-        //}
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop()
         {
-            var result = await _mediator.Send(new GetLaptop.Query());
+            var laptops = await _mediator.Send(new GetLaptop.Query());
 
-            return result;
+            return laptops;
         }
 
 
         // GET: api/Laptops/Get/1001
-        [HttpGet("Get/{id}")]
-        public async Task<ActionResult<LaptopDTO>> GetLaptop(int id)
-        {
-            var laptop = await _context.Laptop
-                .Where(l => l.LaptopID == id)
-                .Select(l => _mapper.Map<LaptopDTO>(l))
-                .SingleOrDefaultAsync();
+        //[HttpGet("Get/{id}")]
+        //public async Task<ActionResult<LaptopDTO>> GetLaptopByID(int id)
+        //{
+        //    var laptop = await _context.Laptop
+        //        .Where(l => l.LaptopID == id)
+        //        .Select(l => _mapper.Map<LaptopDTO>(l))
+        //        .SingleOrDefaultAsync();
 
-            if (laptop == null)
-            {
-                return NotFound();
-            }
+        //    if (laptop == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return laptop;
+        //}
+
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<LaptopDTO>> GetLaptopByID(int id)
+        {
+            var laptop = await _mediator.Send(new GetLaptopByID.Query(id));
 
             return laptop;
         }
+
 
         //PUT: api/Laptops/Update/
         [HttpPut("Update/")]
