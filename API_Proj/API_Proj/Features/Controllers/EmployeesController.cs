@@ -154,7 +154,7 @@ namespace API_Proj.Features.Controllers
                     .Include(l => l.Employee)
                     .ThenInclude(e => e.Offices)
                     .ThenInclude(o => o.Region)
-                    .Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
+                    .Where(l => l.LaptopID == _employee.LaptopID).AsNoTracking().FirstOrDefaultAsync();
                 
                 if (laptop == null)
                 {
