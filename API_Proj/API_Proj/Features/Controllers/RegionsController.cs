@@ -51,24 +51,34 @@ namespace API_Proj.Features.Controllers
         }
 
         // GET: api/Regions/1001
-        [HttpGet("Get/{id}")]
-        public async Task<ActionResult<RegionDTO>> GetRegion(int id)
-        {
-            var region = await _context.Region
-                .Include(r => r.Offices)
-                .ThenInclude(o => o.Employees)
-                .ThenInclude(e => e.Laptop)
-                .Where(r => r.RegionID == id)
-                .Select(r => _mapper.Map<RegionDTO>(r))
-                .SingleOrDefaultAsync();
+        //[HttpGet("Get/{id}")]
+        //public async Task<ActionResult<RegionDTO>> GetRegion(int id)
+        //{
+        //    var region = await _context.Region
+        //        .Include(r => r.Offices)
+        //        .ThenInclude(o => o.Employees)
+        //        .ThenInclude(e => e.Laptop)
+        //        .Where(r => r.RegionID == id)
+        //        .Select(r => _mapper.Map<RegionDTO>(r))
+        //        .SingleOrDefaultAsync();
 
-            if (region == null)
-            {
-                return NotFound();
-            }
+        //    if (region == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return region;
+        //}
+
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<RegionDTO>> GetRegionByID(int id)
+        {
+            var region = await _mediator.Send(new GetRegionByID.Query(id));
 
             return region;
         }
+
+
 
         // PUT: api/Regions/Update/
         [HttpPut("Update/")]

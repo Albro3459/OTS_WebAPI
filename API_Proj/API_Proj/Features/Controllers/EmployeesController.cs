@@ -54,23 +54,31 @@ namespace API_Proj.Features.Controllers
         }
 
         // GET: api/Employees/Get/1001
-        [HttpGet("Get/{id}")]
-        public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
-        {
-            var employee = await _context.Employee
-                .Include(e => e.Offices)
-                .Include(e => e.Laptop)
-                .Where(e => e.EmployeeID == id)
-                .Select(e => _mapper.Map<EmployeeDTO>(e))
-                .SingleOrDefaultAsync();
+        //[HttpGet("Get/{id}")]
+        //public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
+        //{
+    //    var employee = await _context.Employee
+    //        .Include(e => e.Offices)
+    //        .Include(e => e.Laptop)
+    //        .Where(e => e.EmployeeID == id)
+    //        .Select(e => _mapper.Map<EmployeeDTO>(e))
+    //        .SingleOrDefaultAsync();
 
-            if (employee == null)
-            {
-                return NotFound();
-            }
+    //        if (employee == null)
+    //        {
+    //            return NotFound();
+    //}
+
+    //        return employee;
+        //}
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<EmployeeDTO>> GetEmployeeByID(int id)
+        {
+            var employee = await _mediator.Send(new GetEmployeeByID.Query(id));
 
             return employee;
         }
+
 
         // PUT: api/Employees/Update/
         [HttpPut("Update/")]

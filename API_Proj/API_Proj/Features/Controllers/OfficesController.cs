@@ -52,23 +52,32 @@ namespace API_Proj.Features.Controllers
 
 
         // GET: api/Offices/Get/1001
-        [HttpGet("Get/{id}")]
-        public async Task<ActionResult<OfficeDTO>> GetOffice(int id)
-        {
-            var office = await _context.Office
-                .Include(o => o.Employees)
-                .Include(o => o.Region)
-                .Where(o => o.OfficeID == id)
-                .Select(o => _mapper.Map<OfficeDTO>(o))
-                .SingleOrDefaultAsync();
+        //[HttpGet("Get/{id}")]
+        //public async Task<ActionResult<OfficeDTO>> GetOffice(int id)
+        //{
+        //    var office = await _context.Office
+        //        .Include(o => o.Employees)
+        //        .Include(o => o.Region)
+        //        .Where(o => o.OfficeID == id)
+        //        .Select(o => _mapper.Map<OfficeDTO>(o))
+        //        .SingleOrDefaultAsync();
 
-            if (office == null)
-            {
-                return NotFound();
-            }
+        //    if (office == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return office;
+        //}
+
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<OfficeDTO>> GetOfficeByID(int id)
+        {
+            var office = await _mediator.Send(new GetOfficeByID.Query(id));
 
             return office;
         }
+
 
         // PUT: api/Offices/Update/
         [HttpPut("Update/")]
