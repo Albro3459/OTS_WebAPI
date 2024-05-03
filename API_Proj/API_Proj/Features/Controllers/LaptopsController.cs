@@ -14,7 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Drawing;
-using API_Proj.Features.Request.Laptop;
+using API_Proj.Features.Request.Laptops;
 using MediatR;
 
 namespace API_Proj.Features.Controllers
@@ -65,6 +65,11 @@ namespace API_Proj.Features.Controllers
         public async Task<ActionResult<LaptopDTO>> GetLaptopByID(int id)
         {
             var laptop = await _mediator.Send(new GetLaptopByID.Query(id));
+
+            if (laptop == null)
+            {
+                return NotFound();
+            }
 
             return laptop;
         }

@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Laptop
+namespace API_Proj.Features.Request.Laptops
 {
     public static class GetLaptopByID
     {
@@ -38,11 +38,6 @@ namespace API_Proj.Features.Request.Laptop
                     .Where(l => l.LaptopID == request._id)
                     .Select(l => _mapper.Map<LaptopDTO>(l))
                     .SingleOrDefaultAsync(cancellationToken);
-
-                if (laptop == null)
-                {
-                    return new NotFoundResult();
-                }
 
                 return laptop;
             }

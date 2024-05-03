@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Laptop
+namespace API_Proj.Features.Request.Laptops
 {
     public static class GetLaptop
     {
