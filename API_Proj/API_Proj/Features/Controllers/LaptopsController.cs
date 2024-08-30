@@ -71,87 +71,102 @@ namespace API_Proj.Features.Controllers
 
 
         //PUT: api/Laptops/Update/
+        //[HttpPut("Update/")]
+        //public async Task<IActionResult> UpdateLaptop(LaptopDTO _laptop)
+        //{
+        //    if (_laptop == null)
+        //    {
+        //        return NotFound("Laptop can't be null");
+        //    }
+
+        //    var oldLaptop = await _context.Laptop
+        //        .Include(l => l.Employee)
+        //        .Where(l => l.LaptopID == _laptop.LaptopID).FirstOrDefaultAsync();
+
+        //    if (oldLaptop == null)
+        //    {
+        //        return NotFound("Laptop doesn't exist");
+        //    }
+
+        //    _mapper.Map(_laptop, oldLaptop);
+
+        //    if (_laptop.EmployeeID != null)
+        //    {
+        //        if (oldLaptop.Employee == null || oldLaptop.Employee.EmployeeID != _laptop.EmployeeID)
+        //        {    var employee = await _context.Employee
+        //                .Include(e => e.Offices)
+        //                .ThenInclude(o => o.Region)
+        //                .Include(e => e.Offices)
+        //                .ThenInclude(o => o.Employees)
+        //                .ThenInclude(e => e.Laptop)
+        //                .Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
+
+        //            if (employee == null) { return BadRequest("Employee doesn't exist"); }
+
+        //            oldLaptop.EmployeeID = _laptop.EmployeeID;
+        //            oldLaptop.Employee = employee;
+        //        }
+
+        //    }
+
+        //    _context.Update(oldLaptop);
+        //    await _context.SaveChangesAsync();
+
+        //    var returnLaptop = _mapper.Map<LaptopDTO>(oldLaptop);
+        //    return Ok(returnLaptop);
+
+        //}
+
         [HttpPut("Update/")]
-        public async Task<IActionResult> UpdateLaptop(LaptopDTO _laptop)
+        public async Task<IActionResult> UpdateLaptop(LaptopDTO _laptop, CancellationToken cancellationToken)
         {
-            if (_laptop == null)
-            {
-                return NotFound("Laptop can't be null");
-            }
-
-            var oldLaptop = await _context.Laptop
-                .Include(l => l.Employee)
-                .Where(l => l.LaptopID == _laptop.LaptopID).FirstOrDefaultAsync();
-
-            if (oldLaptop == null)
-            {
-                return NotFound("Laptop doesn't exist");
-            }
-
-            _mapper.Map(_laptop, oldLaptop);
-
-            if (_laptop.EmployeeID != null)
-            {
-                if (oldLaptop.Employee == null || oldLaptop.Employee.EmployeeID != _laptop.EmployeeID)
-                {    var employee = await _context.Employee
-                        .Include(e => e.Offices)
-                        .ThenInclude(o => o.Region)
-                        .Include(e => e.Offices)
-                        .ThenInclude(o => o.Employees)
-                        .ThenInclude(e => e.Laptop)
-                        .Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
-
-                    if (employee == null) { return BadRequest("Employee doesn't exist"); }
-
-                    oldLaptop.EmployeeID = _laptop.EmployeeID;
-                    oldLaptop.Employee = employee;
-                }
-
-            }
-
-            _context.Update(oldLaptop);
-            await _context.SaveChangesAsync();
-
-            var returnLaptop = _mapper.Map<LaptopDTO>(oldLaptop);
-            return Ok(returnLaptop);
+            return Ok(await _mediator.Send(new UpdateLaptop.Query(_laptop), cancellationToken));
 
         }
 
+        ////PUT: api/Laptops/Update/{laptopID}/UnassignOwner
+        //[HttpPut("Update/{laptopID}/UnassignOwner")]
+        //public async Task<IActionResult> UnassignOwner(int laptopID)
+        //{
+        //    var laptop = await _context.Laptop
+        //        .Include(l => l.Employee)
+        //        .Where(l => l.LaptopID == laptopID).FirstOrDefaultAsync();
+
+        //    if (laptop == null)
+        //    {
+        //        return NotFound("Laptop doesn't exist");
+        //    }
+
+        //    if (laptop.EmployeeID == null || laptop.Employee == null)
+        //    {
+        //        return NotFound("Laptop doesn't have an employee");
+        //    }
+
+        //    var employee = await _context.Employee.Where(e => e.EmployeeID == laptop.EmployeeID).FirstOrDefaultAsync();
+
+        //    if (employee == null)
+        //    {
+        //        return NotFound("Employee doesn't exist");
+        //    }
+
+        //    laptop.Employee = null;
+        //    laptop.EmployeeID = null;
+
+
+        //    employee.Laptop = null;
+
+        //    await _context.SaveChangesAsync();
+
+        //    var laptopDTO = _mapper.Map<LaptopDTO>(laptop);
+        //    return Ok(laptopDTO);
+
+        //}
+
         //PUT: api/Laptops/Update/{laptopID}/UnassignOwner
         [HttpPut("Update/{laptopID}/UnassignOwner")]
-        public async Task<IActionResult> UnassignOwner(int laptopID)
+        public async Task<IActionResult> UnassignOwner(int laptopID, CancellationToken cancellationToken)
         {
-            var laptop = await _context.Laptop
-                .Include(l => l.Employee)
-                .Where(l => l.LaptopID == laptopID).FirstOrDefaultAsync();
-
-            if (laptop == null)
-            {
-                return NotFound("Laptop doesn't exist");
-            }
-
-            if (laptop.EmployeeID == null || laptop.Employee == null)
-            {
-                return NotFound("Laptop doesn't have an employee");
-            }
-
-            var employee = await _context.Employee.Where(e => e.EmployeeID == laptop.EmployeeID).FirstOrDefaultAsync();
-
-            if (employee == null)
-            {
-                return NotFound("Employee doesn't exist");
-            }
-
-            laptop.Employee = null;
-            laptop.EmployeeID = null;
-
-            
-            employee.Laptop = null;
-
-            await _context.SaveChangesAsync();
-
-            var laptopDTO = _mapper.Map<LaptopDTO>(laptop);
-            return Ok(laptopDTO);
+            return Ok(await _mediator.Send(new UpdateLaptopByID.Query(laptopID), cancellationToken));
 
         }
 
