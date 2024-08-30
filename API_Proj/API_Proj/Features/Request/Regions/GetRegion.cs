@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Region
+namespace API_Proj.Features.Request.Regions
 {
     public static class GetRegion
     {

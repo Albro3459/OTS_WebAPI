@@ -10,7 +10,7 @@ using API_Proj.Features.DTO;
 using API_Proj.Infastructure;
 using AutoMapper;
 using MediatR;
-using API_Proj.Features.Request.Region;
+using API_Proj.Features.Request.Regions;
 
 namespace API_Proj.Features.Controllers
 {
@@ -30,7 +30,7 @@ namespace API_Proj.Features.Controllers
         }
 
         // GET: api/Regions/Get
-        [HttpGet("Get")]
+
         //public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegion()
         //{
         //    var regions = await _context.Region
@@ -42,10 +42,10 @@ namespace API_Proj.Features.Controllers
 
         //    return regions;
         //}
-
-        public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegion()
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<RegionDTO>>> GetRegion(CancellationToken cancellationToken)
         {
-            var regions = await _mediator.Send(new GetRegion.Query());
+            var regions = await _mediator.Send(new GetRegion.Query(), cancellationToken);
 
             return regions;
         }
@@ -71,9 +71,9 @@ namespace API_Proj.Features.Controllers
         //}
 
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<RegionDTO>> GetRegionByID(int id)
+        public async Task<ActionResult<RegionDTO>> GetRegionByID(int id, CancellationToken cancellationToken)
         {
-            var region = await _mediator.Send(new GetRegionByID.Query(id));
+            var region = await _mediator.Send(new GetRegionByID.Query(id), cancellationToken);
 
             return region;
         }
@@ -121,58 +121,65 @@ namespace API_Proj.Features.Controllers
             return Ok(regionDTO);
         }
 
+        //// POST: api/Regions
+        //[HttpPost("Create")]
+        //public async Task<ActionResult<RegionDTO>> CreateRegion(RegionForCreationDTO _region)
+        //{
+
+        //    if (_region == null)
+        //    {
+        //        return NotFound("Region can't be null");
+        //    }
+
+        //    var Region = _mapper.Map<Region>(_region);
+
+        //    if (_region.OfficesIDs != null && _region.OfficesIDs.Count != 0)
+        //    {
+        //        foreach (var id in _region.OfficesIDs)
+        //        {
+        //            var office = await _context.Office
+        //                .Include(o => o.Employees)
+        //                .ThenInclude(e => e.Offices)
+        //                .ThenInclude(o => o.Region)
+        //                .Include(o => o.Employees)
+        //                .ThenInclude(e => e.Laptop)
+        //                .Include(o => o.Region)
+        //                .ThenInclude(r => r.Offices)
+        //                .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+
+        //            if (office == null)
+        //            {
+        //                return NotFound("Employees doesn't exist");
+        //            }
+
+        //            if (office.Region == Region)
+        //            {
+        //                continue;
+        //                //return NotFound("Employee already works at that office");
+        //            }
+        //            Region.Offices.Add(office);
+
+        //        }
+        //    }
+
+        //    _context.Region.Add(Region);
+        //    await _context.SaveChangesAsync();
+
+        //    //var regionDTO = await _context.Region
+        //    //    .Where(r => r.RegionID == Region.RegionID)
+        //    //    .Select(r => _mapper.Map<RegionDTO>(r))
+        //    //    .FirstOrDefaultAsync();
+
+        //    var regionDTO = _mapper.Map<RegionDTO>(Region);
+
+        //    return regionDTO ?? new RegionDTO();
+        //}
+
         // POST: api/Regions
         [HttpPost("Create")]
-        public async Task<ActionResult<RegionDTO>> CreateRegion(RegionForCreationDTO _region)
+        public async Task<ActionResult<RegionDTO>> CreateRegion(RegionForCreationDTO _region, CancellationToken cancellationToken)
         {
-
-            if (_region == null)
-            {
-                return NotFound("Region can't be null");
-            }
-
-            var Region = _mapper.Map<Region>(_region);
-
-            if (_region.OfficesIDs != null && _region.OfficesIDs.Count != 0)
-            {
-                foreach (var id in _region.OfficesIDs)
-                {
-                    var office = await _context.Office
-                        .Include(o => o.Employees)
-                        .ThenInclude(e => e.Offices)
-                        .ThenInclude(o => o.Region)
-                        .Include(o => o.Employees)
-                        .ThenInclude(e => e.Laptop)
-                        .Include(o => o.Region)
-                        .ThenInclude(r => r.Offices)
-                        .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
-
-                    if (office == null)
-                    {
-                        return NotFound("Employees doesn't exist");
-                    }
-
-                    if (office.Region == Region)
-                    {
-                        continue;
-                        //return NotFound("Employee already works at that office");
-                    }
-                    Region.Offices.Add(office);
-
-                }
-            }
-
-            _context.Region.Add(Region);
-            await _context.SaveChangesAsync();
-
-            //var regionDTO = await _context.Region
-            //    .Where(r => r.RegionID == Region.RegionID)
-            //    .Select(r => _mapper.Map<RegionDTO>(r))
-            //    .FirstOrDefaultAsync();
-
-            var regionDTO = _mapper.Map<RegionDTO>(Region);
-
-            return regionDTO ?? new RegionDTO();
+            return await _mediator.Send(new CreateRegion.Query(_region), cancellationToken);
         }
 
 

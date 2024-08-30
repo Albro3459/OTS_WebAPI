@@ -36,9 +36,9 @@ namespace API_Proj.Features.Controllers
 
         // GET: api/Laptops/Get
         [HttpGet("Get")]
-        public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop()
+        public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop(CancellationToken cancellationToken)
         {
-            var laptops = await _mediator.Send(new GetLaptop.Query());
+            var laptops = await _mediator.Send(new GetLaptop.Query(), cancellationToken);
 
             return laptops;
         }
@@ -62,14 +62,9 @@ namespace API_Proj.Features.Controllers
         //}
 
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<LaptopDTO>> GetLaptopByID(int id)
+        public async Task<ActionResult<LaptopDTO>> GetLaptopByID(int id, CancellationToken cancellationToken)
         {
-            var laptop = await _mediator.Send(new GetLaptopByID.Query(id));
-
-            if (laptop == null)
-            {
-                return NotFound();
-            }
+            var laptop = await _mediator.Send(new GetLaptopByID.Query(id), cancellationToken);
 
             return laptop;
         }
@@ -160,50 +155,62 @@ namespace API_Proj.Features.Controllers
 
         }
 
+        //// POST: api/Laptops/
+        //[HttpPost("Create")]
+        //public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _laptop)
+        //{
+
+        //    if (_laptop == null)
+        //    {
+        //        return NotFound("Laptop can't be null");
+        //    }
+
+        //    var Laptop = _mapper.Map<Laptop>(_laptop);
+
+        //    if (_laptop.EmployeeID != null)
+        //    {
+
+        //        var employee = await _context.Employee
+        //            .Include(e => e.Offices)
+        //            .Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
+
+        //        if (employee == null)
+        //        {
+        //            return NotFound("Employee not found");
+        //        }
+
+        //        if (employee.Laptop != null)
+        //        {
+        //            return BadRequest("Employee already has a laptop");
+        //        }
+
+        //        employee.Laptop = Laptop;
+        //    }
+
+        //    _context.Laptop.Add(Laptop);
+
+        //    await _context.SaveChangesAsync();
+
+        //    //var laptopDTO = await _context.Laptop
+        //    //    .Where(l => l.LaptopID == Laptop.LaptopID)
+        //    //    .Select(l => _mapper.Map<LaptopDTO>(l))
+        //    //    .FirstOrDefaultAsync();
+
+        //    var laptopDTO = _mapper.Map<LaptopDTO>(Laptop);
+
+        //    return laptopDTO ?? new LaptopDTO();
+        //}
+
         // POST: api/Laptops/
         [HttpPost("Create")]
-        public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _laptop)
+        public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _laptop, CancellationToken cancellationToken)
         {
-
             if (_laptop == null)
             {
                 return NotFound("Laptop can't be null");
             }
 
-            var Laptop = _mapper.Map<Laptop>(_laptop);
-
-            if (_laptop.EmployeeID != null)
-            {
-              
-                var employee = await _context.Employee
-                    .Include(e => e.Offices)
-                    .Where(e => e.EmployeeID == _laptop.EmployeeID).FirstOrDefaultAsync();
-
-                if (employee == null)
-                {
-                    return NotFound("Employee not found");
-                }
-
-                if (employee.Laptop != null)
-                {
-                    return BadRequest("Employee already has a laptop");
-                }
-
-                employee.Laptop = Laptop;
-            }
-
-            _context.Laptop.Add(Laptop);
-
-            await _context.SaveChangesAsync();
-
-            //var laptopDTO = await _context.Laptop
-            //    .Where(l => l.LaptopID == Laptop.LaptopID)
-            //    .Select(l => _mapper.Map<LaptopDTO>(l))
-            //    .FirstOrDefaultAsync();
-
-            var laptopDTO = _mapper.Map<LaptopDTO>(Laptop);
-
-            return laptopDTO ?? new LaptopDTO();
+            return await _mediator.Send(new CreateLaptop.Query(_laptop), cancellationToken);
         }
 
         // DELETE: api/Laptops/Delete/5

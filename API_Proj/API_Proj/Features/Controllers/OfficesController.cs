@@ -11,7 +11,9 @@ using AutoMapper;
 using API_Proj.Features.DTO;
 using System.Drawing;
 using MediatR;
-using API_Proj.Features.Request.Office;
+using API_Proj.Features.Request.Offices;
+using System.Threading;
+using API_Proj.Features.Request.Employees;
 
 namespace API_Proj.Features.Controllers
 {
@@ -30,8 +32,7 @@ namespace API_Proj.Features.Controllers
             _mediator = mediator;
         }
 
-        // GET: api/Offices/Get
-        [HttpGet("Get")]
+
         //public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
         //{
         //var offices = await _context.Office
@@ -43,9 +44,11 @@ namespace API_Proj.Features.Controllers
         //    return offices;
         //}
 
-        public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice()
+        // GET: api/Offices/Get
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<OfficeDTO>>> GetOffice(CancellationToken cancellationToken)
         {
-            var offices = await _mediator.Send(new GetOffice.Query());
+            var offices = await _mediator.Send(new GetOffice.Query(), cancellationToken);
 
             return offices;
         }
@@ -71,9 +74,9 @@ namespace API_Proj.Features.Controllers
         //}
 
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<OfficeDTO>> GetOfficeByID(int id)
+        public async Task<ActionResult<OfficeDTO>> GetOfficeByID(int id, CancellationToken cancellationToken)
         {
-            var office = await _mediator.Send(new GetOfficeByID.Query(id));
+            var office = await _mediator.Send(new GetOfficeByID.Query(id), cancellationToken);
 
             return office;
         }
@@ -184,74 +187,81 @@ namespace API_Proj.Features.Controllers
 
         }
 
+        //// POST: api/Offices
+        //[HttpPost("Create")]
+        //public async Task<ActionResult<OfficeDTO>> CreateOffice(RegionForCreationDTO _region)
+        //{
+
+        //    if (_region == null)
+        //    {
+        //        return NotFound("Office can't be null");
+        //    }
+
+        //    var Office = _mapper.Map<Office>(_region);
+
+        //    if (_region.EmployeesIDs != null && _region.EmployeesIDs.Count != 0)
+        //    {
+        //        foreach (var id in _region.EmployeesIDs)
+        //        {
+        //            var employee = await _context.Employee
+        //                .Include(e => e.Offices)
+        //                .ThenInclude(o => o.Region)
+        //                .Include(e => e.Offices)
+        //                .ThenInclude(o => o.Employees)
+        //                .Include(e => e.Laptop)
+        //                .Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+
+        //            if (employee == null)
+        //            {
+        //                return NotFound("Employees doesn't exist");
+        //            }
+
+        //            if (employee.Offices.Contains(Office))
+        //            {
+        //                continue;
+        //                //return BadRequest("Employee already works at that office");
+        //            }
+        //            Office.Employees.Add(employee);
+
+        //        }
+        //    }
+
+        //    if (_region.RegionID != null)
+        //    {
+        //        var region = await _context.Region.Where(r => r.RegionID == _region.RegionID).FirstOrDefaultAsync();
+        //        if (region == null)
+        //        {
+        //            return NotFound("Region doesn't exist");
+        //        }
+        //        if (!region.Offices.Contains(Office))
+        //        {
+        //            Office.Region = region;
+        //        }
+
+        //        region.Offices.Add(Office);
+        //    }
+
+        //    // Uneccesary but works, ef core does it for me
+        //    //foreach (var e in Office.Employees)
+        //    //{
+        //    //    e.Offices.Add(Office);
+        //    //}
+
+        //    _context.Office.Add(Office);
+        //    await _context.SaveChangesAsync();
+
+        //    var officeDTO = _mapper.Map<OfficeDTO>(Office);
+
+        //    return officeDTO ?? new OfficeDTO();
+        //}
+
         // POST: api/Offices
         [HttpPost("Create")]
-        public async Task<ActionResult<OfficeDTO>> CreateOffice(OfficeForCreationDTO _office)
+        public async Task<ActionResult<OfficeDTO>> CreateOffice([FromBody] OfficeForCreationDTO _office, CancellationToken cancellationToken)
         {
-
-            if (_office == null)
-            {
-                return NotFound("Office can't be null");
-            }
-
-            var Office = _mapper.Map<Office>(_office);
-
-            if (_office.EmployeesIDs != null && _office.EmployeesIDs.Count != 0)
-            {
-                foreach (var id in _office.EmployeesIDs)
-                {
-                    var employee = await _context.Employee
-                        .Include(e => e.Offices)
-                        .ThenInclude(o => o.Region)
-                        .Include(e => e.Offices)
-                        .ThenInclude(o => o.Employees)
-                        .Include(e => e.Laptop)
-                        .Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
-
-                    if (employee == null)
-                    {
-                        return NotFound("Employees doesn't exist");
-                    }
-
-                    if (employee.Offices.Contains(Office))
-                    {
-                        continue;
-                        //return BadRequest("Employee already works at that office");
-                    }
-                    Office.Employees.Add(employee);
-
-                }
-            }
-
-            if (_office.RegionID != null)
-            {
-                var region = await _context.Region.Where(r => r.RegionID == _office.RegionID).FirstOrDefaultAsync();
-                if (region == null)
-                {
-                    return NotFound("Region doesn't exist");
-                }
-                if (!region.Offices.Contains(Office))
-                {
-                    Office.Region = region;
-                }
-                
-                region.Offices.Add(Office);
-            }
-
-            // Uneccesary but works, ef core does it for me
-            //foreach (var e in Office.Employees)
-            //{
-            //    e.Offices.Add(Office);
-            //}
-
-            _context.Office.Add(Office);
-            await _context.SaveChangesAsync();
-
-            var officeDTO = _mapper.Map<OfficeDTO>(Office);
-
-            return officeDTO ?? new OfficeDTO();
+            return await _mediator.Send(new CreateOffice.Query(_office), cancellationToken);
+           
         }
-
 
 
         // DELETE: api/Offices/Delete/5

@@ -37,26 +37,31 @@ namespace API_Proj.Features.Request.Laptops
             {
                 if (request._laptop == null)
                 {
-                    return new NotFoundResult("Laptop can't be null");
+                    return new BadRequestObjectResult("Laptop can't be null");
                 }
 
                 var Laptop = _mapper.Map<Laptop>(request._laptop);
 
+                if (Laptop == null)
+                {
+                    return new NotFoundObjectResult("Laptop not found");
+                }
+
                 if (request._laptop.EmployeeID != null)
                 {
-
                     var employee = await _context.Employee
-                    .Include(e => e.Offices)
-                        .Where(e => e.EmployeeID == request._laptop.EmployeeID).FirstOrDefaultAsync();
+                        .Include(e => e.Laptop)
+                        .Include(e => e.Offices)
+                        .Where(e => e.EmployeeID == request._laptop.EmployeeID).FirstOrDefaultAsync(cancellationToken);
 
                     if (employee == null)
                     {
-                        return new NotFoundResult("Employee not found");
+                        return new NotFoundObjectResult("Employee not found");
                     }
 
                     if (employee.Laptop != null)
                     {
-                        return new BadRequestResult("Employee already has a laptop");
+                        return new BadRequestObjectResult("Employee already has a laptop");
                     }
 
                     employee.Laptop = Laptop;
@@ -64,12 +69,8 @@ namespace API_Proj.Features.Request.Laptops
 
                 _context.Laptop.Add(Laptop);
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
 
-                //var laptopDTO = await _context.Laptop
-                //    .Where(l => l.LaptopID == Laptop.LaptopID)
-                //    .Select(l => _mapper.Map<LaptopDTO>(l))
-                //    .FirstOrDefaultAsync();
 
                 var laptopDTO = _mapper.Map<LaptopDTO>(Laptop);
 

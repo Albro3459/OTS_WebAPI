@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Office
+namespace API_Proj.Features.Request.Offices
 {
     public static class GetOfficeByID
     {
@@ -43,7 +43,7 @@ namespace API_Proj.Features.Request.Office
 
                 if (office == null)
                 {
-                    return new NotFoundResult();
+                    return new NotFoundObjectResult("Office not found");
                 }
 
                 return office;

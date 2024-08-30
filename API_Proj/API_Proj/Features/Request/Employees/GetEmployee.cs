@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Employee
+namespace API_Proj.Features.Request.Employees
 {
     public static class GetEmployee
     {

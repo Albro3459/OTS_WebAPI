@@ -1,4 +1,5 @@
-﻿using API_Proj.Features.DTO;
+﻿using API_Proj.Domain.Entity;
+using API_Proj.Features.DTO;
 using API_Proj.Infastructure;
 using AutoMapper;
 using MediatR;
@@ -38,6 +39,11 @@ namespace API_Proj.Features.Request.Laptops
                     .Where(l => l.LaptopID == request._id)
                     .Select(l => _mapper.Map<LaptopDTO>(l))
                     .SingleOrDefaultAsync(cancellationToken);
+
+                if (laptop == null)
+                {
+                    return new NotFoundObjectResult("Laptop not found");
+                }
 
                 return laptop;
             }

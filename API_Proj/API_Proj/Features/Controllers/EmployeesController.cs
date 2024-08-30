@@ -13,7 +13,7 @@ using AutoMapper;
 using System.Security.Cryptography;
 using NuGet.Packaging;
 using MediatR;
-using API_Proj.Features.Request.Employee;
+using API_Proj.Features.Request.Employees;
 
 namespace API_Proj.Features.Controllers
 {
@@ -46,9 +46,9 @@ namespace API_Proj.Features.Controllers
         //}
 
         [HttpGet("Get")]
-        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee()
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee(CancellationToken cancellationToken)
         {
-            var employees = await _mediator.Send(new GetEmployee.Query());
+            var employees = await _mediator.Send(new GetEmployee.Query(), cancellationToken);
 
             return employees;
         }
@@ -72,9 +72,9 @@ namespace API_Proj.Features.Controllers
     //        return employee;
         //}
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<EmployeeDTO>> GetEmployeeByID(int id)
+        public async Task<ActionResult<EmployeeDTO>> GetEmployeeByID(int id, CancellationToken cancellationToken)
         {
-            var employee = await _mediator.Send(new GetEmployeeByID.Query(id));
+            var employee = await _mediator.Send(new GetEmployeeByID.Query(id), cancellationToken);
 
             return employee;
         }
@@ -137,75 +137,81 @@ namespace API_Proj.Features.Controllers
         }
 
         //POST: api/Employees
+        //[HttpPost("Create")]
+        //public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _employee)
+        //{
+
+        //    if (_employee == null) {
+        //        return NotFound("Employee can't be null");
+        //    }
+
+        //    var Employee = _mapper.Map<Employee>(_employee);
+
+        //    if (_employee.LaptopID != null)
+        //    {
+
+        //        var laptop = await _context.Laptop
+        //            .Include(l => l.Employee)
+        //            .ThenInclude(e => e.Offices)
+        //            .ThenInclude(o => o.Region)
+        //            .Where(l => l.LaptopID == _employee.LaptopID).AsNoTracking().FirstOrDefaultAsync();
+
+        //        if (laptop == null)
+        //        {
+        //            return NotFound("Employee not found");
+        //        }
+
+        //        if (laptop.EmployeeID != null)
+        //        {
+        //            return NotFound("Laptop is taken");
+        //        }
+
+        //        Employee.Laptop = laptop;
+        //    }
+
+        //    if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count != 0)
+        //    {
+        //        var offices = new List<Office>();
+
+        //        foreach (var id in _employee.OfficesIDs) {
+
+        //            var office = await _context.Office
+        //                .Include(o => o.Employees)
+        //                .ThenInclude(e => e.Laptop)
+        //                .Include(o => o.Employees)
+        //                .ThenInclude(e => e.Offices)
+        //                .ThenInclude(o => o.Region)
+        //                .Include(o => o.Region)
+        //                .ThenInclude(r => r.Offices)
+        //                .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+
+        //            if (office == null)
+        //            {
+        //                return NotFound("Office not found");
+        //            }
+        //            office.Employees.Add(Employee);
+        //        }
+        //    }
+
+        //    _context.Employee.Add(Employee);
+
+        //    await _context.SaveChangesAsync();
+
+        //    //var employeeDTO = await _context.Employee
+        //    //    .Where(e => e.EmployeeID == Employee.EmployeeID)
+        //    //    .Select(e => _mapper.Map<EmployeeDTO>(e))
+        //    //    .FirstOrDefaultAsync();
+
+        //    var employeeDTO = _mapper.Map<EmployeeDTO>(Employee);
+
+
+        //    return employeeDTO ?? new EmployeeDTO();
+        //}
+
         [HttpPost("Create")]
-        public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _employee)
+        public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _employee, CancellationToken cancellationToken)
         {
-
-            if (_employee == null) {
-                return NotFound("Employee can't be null");
-            }
-
-            var Employee = _mapper.Map<Employee>(_employee);
-
-            if (_employee.LaptopID != null)
-            {
-
-                var laptop = await _context.Laptop
-                    .Include(l => l.Employee)
-                    .ThenInclude(e => e.Offices)
-                    .ThenInclude(o => o.Region)
-                    .Where(l => l.LaptopID == _employee.LaptopID).AsNoTracking().FirstOrDefaultAsync();
-                
-                if (laptop == null)
-                {
-                    return NotFound("Employee not found");
-                }
-
-                if (laptop.EmployeeID != null)
-                {
-                    return NotFound("Laptop is taken");
-                }
-
-                Employee.Laptop = laptop;
-            }
-
-            if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count != 0)
-            {
-                var offices = new List<Office>();
-
-                foreach (var id in _employee.OfficesIDs) {
-
-                    var office = await _context.Office
-                        .Include(o => o.Employees)
-                        .ThenInclude(e => e.Laptop)
-                        .Include(o => o.Employees)
-                        .ThenInclude(e => e.Offices)
-                        .ThenInclude(o => o.Region)
-                        .Include(o => o.Region)
-                        .ThenInclude(r => r.Offices)
-                        .Where(o => o.OfficeID == id).FirstOrDefaultAsync();
-                    
-                    if (office == null)
-                    {
-                        return NotFound("Office not found");
-                    }
-                    office.Employees.Add(Employee);
-                }
-            }
-
-            _context.Employee.Add(Employee);
-
-            await _context.SaveChangesAsync();
-
-            //var employeeDTO = await _context.Employee
-            //    .Where(e => e.EmployeeID == Employee.EmployeeID)
-            //    .Select(e => _mapper.Map<EmployeeDTO>(e))
-            //    .FirstOrDefaultAsync();
-
-            var employeeDTO = _mapper.Map<EmployeeDTO>(Employee);
-
-
-            return employeeDTO ?? new EmployeeDTO();
+            return await _mediator.Send(new CreateEmployee.Query(_employee), cancellationToken);
         }
 
         // DELETE: api/Employees/Delete/5

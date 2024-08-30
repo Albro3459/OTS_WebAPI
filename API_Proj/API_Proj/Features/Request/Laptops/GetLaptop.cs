@@ -29,7 +29,7 @@ namespace API_Proj.Features.Request.Laptops
             public async Task<ActionResult<IEnumerable<LaptopDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var laptops = await _context.Laptop
-                .Select(l => _mapper.Map<LaptopDTO>(l)).ToListAsync(cancellationToken);
+                    .Select(l => _mapper.Map<LaptopDTO>(l)).ToListAsync(cancellationToken);
 
                 return laptops;
             }

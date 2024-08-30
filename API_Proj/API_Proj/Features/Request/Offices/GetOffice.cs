@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Office
+namespace API_Proj.Features.Request.Offices
 {
     public static class GetOffice
     {

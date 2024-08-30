@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace API_Proj.Features.Request.Region
+namespace API_Proj.Features.Request.Regions
 {
     public static class GetRegionByID
     {
@@ -40,11 +40,11 @@ namespace API_Proj.Features.Request.Region
                     .ThenInclude(e => e.Laptop)
                     .Where(r => r.RegionID == request._id)
                     .Select(r => _mapper.Map<RegionDTO>(r))
-                    .SingleOrDefaultAsync();
+                    .SingleOrDefaultAsync(cancellationToken);
 
                 if (region == null)
                 {
-                    return new NotFoundResult();
+                    return new NotFoundObjectResult("Region not found");
                 }
 
                 return region;

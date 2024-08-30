@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
-namespace API_Proj.Features.Request.Employee
+namespace API_Proj.Features.Request.Employees
 {
     public static class GetEmployeeByID
     {
@@ -44,7 +44,7 @@ namespace API_Proj.Features.Request.Employee
 
                 if (employee == null)
                 {
-                    return new NotFoundResult();
+                    return new NotFoundObjectResult("Employee not found");
                 }
 
                 return employee;
