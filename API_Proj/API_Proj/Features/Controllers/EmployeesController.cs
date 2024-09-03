@@ -48,9 +48,14 @@ namespace API_Proj.Features.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee(CancellationToken cancellationToken)
         {
-            var employees = await _mediator.Send(new GetEmployee.Query(), cancellationToken);
+            var employee = await _mediator.Send(new GetEmployee.Query(), cancellationToken);
 
-            return employees;
+            if (employee.Value != null)
+            {
+                return Ok(employee);
+            }
+
+            return employee.Result;
         }
 
         // GET: api/Employees/Get/1001
@@ -76,64 +81,83 @@ namespace API_Proj.Features.Controllers
         {
             var employee = await _mediator.Send(new GetEmployeeByID.Query(id), cancellationToken);
 
-            return employee;
+            if (employee.Value != null)
+            {
+                return Ok(employee);
+            }
+
+            return employee.Result;
         }
 
 
+        //// PUT: api/Employees/Update/
+        //[HttpPut("Update/")]
+        //public async Task<IActionResult> UpdateEmployee(EmployeeDTO _employee)
+        //{
+        //    if (_employee == null)
+        //    { return NotFound("Employee can't be null"); }
+
+        //    var oldEmployee = await _context.Employee
+        //        .Include(e => e.Laptop)
+        //        .Include(e => e.Offices)
+        //        .ThenInclude(o => o.Region)
+        //        .ThenInclude(r => r.Offices)
+        //        .Where(e => e.EmployeeID == _employee.EmployeeID).FirstOrDefaultAsync();
+
+        //    if (oldEmployee == null)
+        //    { return NotFound("Employee doesn't exist"); }
+
+
+        //    _mapper.Map(_employee, oldEmployee);
+
+
+        //    if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count >= 0)
+        //    {
+        //        oldEmployee.Offices.Clear();
+
+        //        foreach (var id in _employee.OfficesIDs)
+        //        {
+        //            var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+        //            if (office == null) { continue; }
+        //            oldEmployee.Offices.Add(office);
+        //        }
+
+        //    }
+
+        //    if (_employee.LaptopID != null)
+        //    {
+        //        if (oldEmployee.Laptop == null || oldEmployee.Laptop.LaptopID != _employee.LaptopID) {
+
+        //            var laptop = await _context.Laptop.Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
+
+        //            if (laptop == null) { return NotFound("Laptop doesn't exist"); }
+
+        //            oldEmployee.Laptop = laptop;
+        //        }
+
+        //    }
+
+        //    _context.Update(oldEmployee);
+        //    await _context.SaveChangesAsync();
+
+        //    var employeeDTO = _mapper.Map<EmployeeDTO>(oldEmployee);
+
+        //    return Ok(employeeDTO);
+
+        //}
+
         // PUT: api/Employees/Update/
-        [HttpPut("Update/")]
-        public async Task<IActionResult> UpdateEmployee(EmployeeDTO _employee)
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateEmployee(EmployeeDTO _employee, CancellationToken cancellationToken) 
         {
-            if (_employee == null)
-            { return NotFound("Employee can't be null"); }
+            var employee = await _mediator.Send(new UpdateEmployee.Query(_employee), cancellationToken);
 
-            var oldEmployee = await _context.Employee
-                .Include(e => e.Laptop)
-                .Include(e => e.Offices)
-                .ThenInclude(o => o.Region)
-                .ThenInclude(r => r.Offices)
-                .Where(e => e.EmployeeID == _employee.EmployeeID).FirstOrDefaultAsync();
-
-            if (oldEmployee == null)
-            { return NotFound("Employee doesn't exist"); }
-
-
-            _mapper.Map(_employee, oldEmployee);
-
-
-            if (_employee.OfficesIDs != null && _employee.OfficesIDs.Count >= 0)
+            if (employee.Value != null)
             {
-                oldEmployee.Offices.Clear();
-
-                foreach (var id in _employee.OfficesIDs)
-                {
-                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
-                    if (office == null) { continue; }
-                    oldEmployee.Offices.Add(office);
-                }
-                
+                return Ok(employee);
             }
 
-            if (_employee.LaptopID != null)
-            {
-                if (oldEmployee.Laptop == null || oldEmployee.Laptop.LaptopID != _employee.LaptopID) {
-
-                    var laptop = await _context.Laptop.Where(l => l.LaptopID == _employee.LaptopID).FirstOrDefaultAsync();
-
-                    if (laptop == null) { return NotFound("Laptop doesn't exist"); }
-
-                    oldEmployee.Laptop = laptop;
-                }
-
-            }
-
-            _context.Update(oldEmployee);
-            await _context.SaveChangesAsync();
-
-            var employeeDTO = _mapper.Map<EmployeeDTO>(oldEmployee);
-
-            return Ok(employeeDTO);
-            
+            return employee.Result;
         }
 
         //POST: api/Employees
@@ -211,7 +235,14 @@ namespace API_Proj.Features.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<EmployeeDTO>> CreateEmployee([FromBody] EmployeeForCreationDTO _employee, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new CreateEmployee.Query(_employee), cancellationToken);
+            var employee = await _mediator.Send(new CreateEmployee.Query(_employee), cancellationToken);
+
+            if (employee.Value != null)
+            {
+                return Ok(employee);
+            }
+
+            return employee.Result;
         }
 
         // DELETE: api/Employees/Delete/5

@@ -56,7 +56,7 @@ namespace API_Proj.Features.Request.Laptops
 
                     if (employee == null)
                     {
-                        return new NotFoundObjectResult("Employee not found");
+                        return new NotFoundObjectResult("Employee " + request._laptop.EmployeeID + " doesn't exist");
                     }
 
                     if (employee.Laptop != null)

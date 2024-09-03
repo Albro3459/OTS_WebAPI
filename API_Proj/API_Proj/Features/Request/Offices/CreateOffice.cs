@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_Proj.Features.Request.Offices
 {
-    public class CreateOffice
+    public static class CreateOffice
     {
         public class Query : IRequest<ActionResult<OfficeDTO>>
         {
@@ -61,7 +61,7 @@ namespace API_Proj.Features.Request.Offices
 
                         if (employee == null)
                         {
-                            return new NotFoundObjectResult("Employees doesn't exist");
+                            return new NotFoundObjectResult("Employee " + id + " doesn't exist");
                         }
 
                         if (employee.Offices != null && employee.Offices.Contains(Office))
@@ -80,7 +80,7 @@ namespace API_Proj.Features.Request.Offices
                     var region = await _context.Region.Where(r => r.RegionID == request._office.RegionID).FirstOrDefaultAsync(cancellationToken);
                     if (region == null)
                     {
-                        return new NotFoundObjectResult("Region doesn't exist");
+                        return new NotFoundObjectResult("Region " + request._office.RegionID + " doesn't exist");
                     }
                     if (!region.Offices.Contains(Office))
                     {

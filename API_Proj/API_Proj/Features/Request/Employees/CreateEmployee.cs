@@ -59,7 +59,7 @@ namespace API_Proj.Features.Request.Employees
 
                     if (laptop == null)
                     {
-                        return new NotFoundObjectResult("Employee not found");
+                        return new NotFoundObjectResult("Laptop " + request._employee.LaptopID + " doesn't exist");
                     }
 
                     if (laptop.EmployeeID != null)
@@ -89,7 +89,7 @@ namespace API_Proj.Features.Request.Employees
 
                         if (office == null)
                         {
-                            return new NotFoundObjectResult("Office not found");
+                            return new NotFoundObjectResult("Office " + id + " doesn't exist");
                         }
                         office.Employees.Add(Employee);
                     }

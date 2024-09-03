@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_Proj.Features.Request.Regions
 {
-    public class CreateRegion
+    public static class CreateRegion
     {
         public class Query : IRequest<ActionResult<RegionDTO>>
         {
@@ -58,12 +58,12 @@ namespace API_Proj.Features.Request.Regions
 
                         if (office == null)
                         {
-                            return new NotFoundObjectResult("Employees doesn't exist");
+                            return new NotFoundObjectResult("Office " + id + " doesn't exist");
                         }
 
                         if (office.Region != null)
                         {
-                            return new BadRequestObjectResult("Employee already works at an office");
+                            return new BadRequestObjectResult("Office already has a region");
                         }
 
                         if (office.Region == Region)

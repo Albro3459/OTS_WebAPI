@@ -11,6 +11,9 @@ using API_Proj.Infastructure;
 using AutoMapper;
 using MediatR;
 using API_Proj.Features.Request.Regions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Drawing;
 
 namespace API_Proj.Features.Controllers
 {
@@ -47,7 +50,12 @@ namespace API_Proj.Features.Controllers
         {
             var regions = await _mediator.Send(new GetRegion.Query(), cancellationToken);
 
-            return regions;
+            if (regions.Value != null)
+            {
+                return Ok(regions);
+            }
+
+            return regions.Result;
         }
 
         // GET: api/Regions/1001
@@ -75,50 +83,67 @@ namespace API_Proj.Features.Controllers
         {
             var region = await _mediator.Send(new GetRegionByID.Query(id), cancellationToken);
 
-            return region;
+            if (region.Value != null)
+            {
+                return Ok(region);
+            }
+
+            return region.Result;
         }
 
 
 
+        //// PUT: api/Regions/Update/
+        //[HttpPut("Update/")]
+        //public async Task<IActionResult> UpdateRegion(RegionDTO _region)
+        //{
+        //    if (_region == null)
+        //    { return NotFound("Region can't be null"); }
+
+        //    var oldRegion = await _context.Region
+        //        .Include(r => r.Offices)
+        //        .ThenInclude(o => o.Employees)
+        //        .ThenInclude(e => e.Laptop)
+        //        .Where(r => r.RegionID == _region.RegionID).FirstOrDefaultAsync();
+
+        //    if (oldRegion == null)
+        //    { return NotFound("Region doesn't exist"); }
+
+
+        //    _mapper.Map(_region, oldRegion);
+
+
+        //    if (_region.OfficesIDs != null && _region.OfficesIDs.Count >= 0)
+        //    {
+        //        oldRegion.Offices.Clear();
+
+        //        foreach (var id in _region.OfficesIDs)
+        //        {
+        //            var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
+        //            if (office == null) { continue; }
+        //            oldRegion.Offices.Add(office);
+        //        }
+
+        //    }
+
+        //    _context.Update(oldRegion);
+        //    await _context.SaveChangesAsync();
+
+        //    var regionDTO = _mapper.Map<RegionDTO>(oldRegion);
+
+        //    return Ok(regionDTO);
+        //}
         // PUT: api/Regions/Update/
         [HttpPut("Update/")]
-        public async Task<IActionResult> UpdateRegion(RegionDTO _region)
+        public async Task<IActionResult> UpdateRegion(RegionDTO _region, CancellationToken cancellationToken)
         {
-            if (_region == null)
-            { return NotFound("Region can't be null"); }
+            var region = await _mediator.Send(new UpdateRegion.Query(_region), cancellationToken);
 
-            var oldRegion = await _context.Region
-                .Include(r => r.Offices)
-                .ThenInclude(o => o.Employees)
-                .ThenInclude(e => e.Laptop)
-                .Where(r => r.RegionID == _region.RegionID).FirstOrDefaultAsync();
-
-            if (oldRegion == null)
-            { return NotFound("Region doesn't exist"); }
-
-
-            _mapper.Map(_region, oldRegion);
-
-
-            if (_region.OfficesIDs != null && _region.OfficesIDs.Count >= 0)
-            {
-                oldRegion.Offices.Clear();
-
-                foreach (var id in _region.OfficesIDs)
-                {
-                    var office = await _context.Office.Where(o => o.OfficeID == id).FirstOrDefaultAsync();
-                    if (office == null) { continue; }
-                    oldRegion.Offices.Add(office);
-                }
-
+            if (region.Value != null) {
+                return Ok(region);
             }
 
-            _context.Update(oldRegion);
-            await _context.SaveChangesAsync();
-
-            var regionDTO = _mapper.Map<RegionDTO>(oldRegion);
-
-            return Ok(regionDTO);
+            return region.Result;
         }
 
         //// POST: api/Regions
@@ -179,7 +204,14 @@ namespace API_Proj.Features.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<RegionDTO>> CreateRegion(RegionForCreationDTO _region, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new CreateRegion.Query(_region), cancellationToken);
+            var region = await _mediator.Send(new CreateRegion.Query(_region), cancellationToken);
+
+            if (region.Value != null)
+            {
+                return Ok(region);
+            }
+
+            return region.Result;
         }
 
 

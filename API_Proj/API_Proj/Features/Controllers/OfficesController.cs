@@ -50,7 +50,12 @@ namespace API_Proj.Features.Controllers
         {
             var offices = await _mediator.Send(new GetOffice.Query(), cancellationToken);
 
-            return offices;
+            if (offices.Value != null)
+            {
+                return Ok(offices);
+            }
+
+            return offices.Result;
         }
 
 
@@ -78,113 +83,147 @@ namespace API_Proj.Features.Controllers
         {
             var office = await _mediator.Send(new GetOfficeByID.Query(id), cancellationToken);
 
-            return office;
+            if (office.Value != null)
+            {
+                return Ok(office);
+            }
+
+            return office.Result;
         }
 
+
+        //// PUT: api/Offices/Update/
+        //[HttpPut("Update/")]
+        //public async Task<IActionResult> UpdateOffice(OfficeDTO _office)
+        //{
+        //    if (_office == null)
+        //    { return NotFound("Office can't be null"); }
+
+        //    var oldOffice = await _context.Office
+        //        .Include(o => o.Employees)
+        //        .ThenInclude(e => e.Laptop)
+        //        .Include(o => o.Employees)
+        //        .ThenInclude(e => e.Offices)
+        //        .ThenInclude(o => o.Region)
+        //        .Include(o => o.Region)
+        //        .ThenInclude(r => r.Offices)
+        //        .Where(o => o.OfficeID ==  _office.OfficeID).FirstOrDefaultAsync();
+
+        //    if (oldOffice == null)
+        //    { return NotFound("Office doesn't exist"); }
+
+
+        //    _mapper.Map(_office, oldOffice);
+
+
+        //    if (_office.EmployeesIDs != null && _office.EmployeesIDs.Count >= 0)
+        //    { 
+        //        oldOffice.Employees.Clear();
+
+        //        foreach(var id in _office.EmployeesIDs)
+        //        {
+        //            var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
+        //            if (employee == null) { continue; }
+        //            oldOffice.Employees.Add(employee);
+        //        }
+
+        //    }
+
+        //    if (_office.RegionID != null)
+        //    {
+        //        if (oldOffice.Region == null || oldOffice.Region.RegionID != _office.RegionID)
+        //        {
+        //            var region = await _context.Region.Where(r => r.RegionID == _office.RegionID).FirstOrDefaultAsync();
+
+        //            if (region == null) { return NotFound("Region doesn't exist"); }
+
+        //            oldOffice.Region = region;
+        //        }
+
+        //    }
+
+        //    _context.Update(oldOffice);
+        //    await _context.SaveChangesAsync();
+
+        //    var officeDTO = _mapper.Map<OfficeDTO>(oldOffice);
+
+        //    return Ok(officeDTO);
+        //}
 
         // PUT: api/Offices/Update/
-        [HttpPut("Update/")]
-        public async Task<IActionResult> UpdateOffice(OfficeDTO _office)
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateOffice(OfficeDTO _office, CancellationToken cancellationToken)
         {
-            if (_office == null)
-            { return NotFound("Office can't be null"); }
 
-            var oldOffice = await _context.Office
-                .Include(o => o.Employees)
-                .ThenInclude(e => e.Laptop)
-                .Include(o => o.Employees)
-                .ThenInclude(e => e.Offices)
-                .ThenInclude(o => o.Region)
-                .Include(o => o.Region)
-                .ThenInclude(r => r.Offices)
-                .Where(o => o.OfficeID ==  _office.OfficeID).FirstOrDefaultAsync();
+            var office = await _mediator.Send(new UpdateOffice.Query(_office), cancellationToken);
 
-            if (oldOffice == null)
-            { return NotFound("Office doesn't exist"); }
-
-
-            _mapper.Map(_office, oldOffice);
-
-
-            if (_office.EmployeesIDs != null && _office.EmployeesIDs.Count >= 0)
-            { 
-                oldOffice.Employees.Clear();
-
-                foreach(var id in _office.EmployeesIDs)
-                {
-                    var employee = await _context.Employee.Where(e => e.EmployeeID == id).FirstOrDefaultAsync();
-                    if (employee == null) { continue; }
-                    oldOffice.Employees.Add(employee);
-                }
-
-            }
-
-            if (_office.RegionID != null)
+            if (office.Value != null)
             {
-                if (oldOffice.Region == null || oldOffice.Region.RegionID != _office.RegionID)
-                {
-                    var region = await _context.Region.Where(r => r.RegionID == _office.RegionID).FirstOrDefaultAsync();
-
-                    if (region == null) { return NotFound("Region doesn't exist"); }
-
-                    oldOffice.Region = region;
-                }
-
+                return Ok(office);
             }
 
-            _context.Update(oldOffice);
-            await _context.SaveChangesAsync();
-
-            var officeDTO = _mapper.Map<OfficeDTO>(oldOffice);
-
-            return Ok(officeDTO);
+            return office.Result;
         }
+
+        ////PUT: api/Offices/Update/{officeID}/UnassignRegion
+        //[HttpPut("Update/{officeID}/UnassignRegion")]
+        //public async Task<IActionResult> UnassignRegion(int officeID)
+        //{
+        //    var office = await _context.Office
+        //        .Include(o => o.Employees)
+        //        .ThenInclude(e => e.Laptop)
+        //        .Include(o => o.Employees)
+        //        .ThenInclude(e => e.Offices)
+        //        .ThenInclude(o => o.Region)
+        //        .Include(o => o.Region)
+        //        .ThenInclude(r => r.Offices)
+        //        .Where(o => o.OfficeID == officeID).FirstOrDefaultAsync();
+
+        //    if (office == null)
+        //    {
+        //        return NotFound("Office doesn't exist");
+        //    }
+
+        //    if (office.RegionID == null || office.Region == null)
+        //    {
+        //        return NotFound("Office doesn't have an region");
+        //    }
+
+        //    var region = await _context.Region.Where(r => r.RegionID == office.RegionID).FirstOrDefaultAsync();
+
+        //    if (region == null)
+        //    {
+        //        return NotFound("Region doesn't exist");
+        //    }
+
+        //    office.Region = null;
+        //    office.RegionID = null;
+
+        //    if (region.Offices != null && region.Offices.Count > 0)
+        //    {
+        //        region.Offices.Remove(office);
+        //    }
+
+
+        //    await _context.SaveChangesAsync();
+
+        //    var officeDTO = _mapper.Map<OfficeDTO>(office);
+        //    return Ok(officeDTO);
+
+        //}
 
         //PUT: api/Offices/Update/{officeID}/UnassignRegion
         [HttpPut("Update/{officeID}/UnassignRegion")]
-        public async Task<IActionResult> UnassignRegion(int officeID)
-        {
-            var office = await _context.Office
-                .Include(o => o.Employees)
-                .ThenInclude(e => e.Laptop)
-                .Include(o => o.Employees)
-                .ThenInclude(e => e.Offices)
-                .ThenInclude(o => o.Region)
-                .Include(o => o.Region)
-                .ThenInclude(r => r.Offices)
-                .Where(o => o.OfficeID == officeID).FirstOrDefaultAsync();
+        public async Task<IActionResult> UnassignRegion(int _officeID, CancellationToken cancellationToken)
+        { 
+            var office = await _mediator.Send(new UnassignRegion.Query(_officeID), cancellationToken);
 
-            if (office == null)
+            if (office.Value != null)
             {
-                return NotFound("Office doesn't exist");
+                return Ok(office);
             }
 
-            if (office.RegionID == null || office.Region == null)
-            {
-                return NotFound("Office doesn't have an region");
-            }
-
-            var region = await _context.Region.Where(r => r.RegionID == office.RegionID).FirstOrDefaultAsync();
-
-            if (region == null)
-            {
-                return NotFound("Region doesn't exist");
-            }
-
-            office.Region = null;
-            office.RegionID = null;
-
-            if (region.Offices != null && region.Offices.Count > 0)
-            {
-                region.Offices.Remove(office);
-            }
-
-
-            await _context.SaveChangesAsync();
-
-            var officeDTO = _mapper.Map<OfficeDTO>(office);
-            return Ok(officeDTO);
-
+            return office.Result;
         }
 
         //// POST: api/Offices
@@ -259,8 +298,15 @@ namespace API_Proj.Features.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<OfficeDTO>> CreateOffice([FromBody] OfficeForCreationDTO _office, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new CreateOffice.Query(_office), cancellationToken);
-           
+            var office = await _mediator.Send(new CreateOffice.Query(_office), cancellationToken);
+
+            if (office.Value != null)
+            {
+                return Ok(office);
+            }
+
+            return office.Result;
+
         }
 
 

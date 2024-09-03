@@ -38,9 +38,13 @@ namespace API_Proj.Features.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop(CancellationToken cancellationToken)
         {
-            var laptops = await _mediator.Send(new GetLaptop.Query(), cancellationToken);
+            var laptop = await _mediator.Send(new GetLaptop.Query(), cancellationToken);
 
-            return laptops;
+            if (laptop.Value != null) {
+                return Ok(laptop);
+            }
+
+            return laptop.Result;
         }
 
 
@@ -66,7 +70,11 @@ namespace API_Proj.Features.Controllers
         {
             var laptop = await _mediator.Send(new GetLaptopByID.Query(id), cancellationToken);
 
-            return laptop;
+            if (laptop.Value != null) {
+                return Ok(laptop);
+            }
+
+            return laptop.Result;
         }
 
 
@@ -120,7 +128,13 @@ namespace API_Proj.Features.Controllers
         [HttpPut("Update/")]
         public async Task<IActionResult> UpdateLaptop(LaptopDTO _laptop, CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new UpdateLaptop.Query(_laptop), cancellationToken));
+            var laptop = await _mediator.Send(new UpdateLaptop.Query(_laptop), cancellationToken);
+
+            if (laptop.Value != null) {
+                return Ok(laptop);
+            }
+
+            return laptop.Result;
 
         }
 
@@ -164,9 +178,15 @@ namespace API_Proj.Features.Controllers
 
         //PUT: api/Laptops/Update/{laptopID}/UnassignOwner
         [HttpPut("Update/{laptopID}/UnassignOwner")]
-        public async Task<IActionResult> UnassignOwner(int laptopID, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnassignOwner(int _laptopID, CancellationToken cancellationToken)
         {
-            return Ok(await _mediator.Send(new UpdateLaptopByID.Query(laptopID), cancellationToken));
+            var laptop = await _mediator.Send(new UnassignOwner.Query(_laptopID), cancellationToken);
+
+            if (laptop.Value != null) {
+                return Ok(laptop);
+            }
+
+            return laptop.Result;
 
         }
 
@@ -225,7 +245,14 @@ namespace API_Proj.Features.Controllers
                 return NotFound("Laptop can't be null");
             }
 
-            return await _mediator.Send(new CreateLaptop.Query(_laptop), cancellationToken);
+            var laptop = await _mediator.Send(new CreateLaptop.Query(_laptop), cancellationToken);
+
+            if (laptop.Value != null)
+            {
+                return Ok(laptop);
+            }
+
+            return laptop.Result;
         }
 
         // DELETE: api/Laptops/Delete/5

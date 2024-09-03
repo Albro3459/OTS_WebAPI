@@ -65,7 +65,7 @@ namespace API_Proj.Features.Request.Laptops
                             .ThenInclude(e => e.Laptop)
                             .Where(e => e.EmployeeID == request._laptop.EmployeeID).FirstOrDefaultAsync(cancellationToken);
 
-                        if (employee == null) { return new BadRequestObjectResult("Employee doesn't exist"); }
+                        if (employee == null) { return new NotFoundObjectResult("Employee " + request._laptop.EmployeeID + " doesn't exist"); }
 
                         oldLaptop.EmployeeID = request._laptop.EmployeeID;
                         oldLaptop.Employee = employee;
@@ -83,7 +83,7 @@ namespace API_Proj.Features.Request.Laptops
         }
     }
 
-    public static class UpdateLaptopByID
+    public static class UnassignOwner
     {
         public class Query : IRequest<ActionResult<LaptopDTO>>
         {
@@ -113,7 +113,7 @@ namespace API_Proj.Features.Request.Laptops
             {
                 var laptop = await _context.Laptop
                 .Include(l => l.Employee)
-                .Where(l => l.LaptopID == request._laptopID).FirstOrDefaultAsync();
+                .Where(l => l.LaptopID == request._laptopID).FirstOrDefaultAsync(cancellationToken);
 
                 if (laptop == null)
                 {
@@ -125,7 +125,7 @@ namespace API_Proj.Features.Request.Laptops
                     return new NotFoundObjectResult("Laptop doesn't have an employee");
                 }
 
-                var employee = await _context.Employee.Where(e => e.EmployeeID == laptop.EmployeeID).FirstOrDefaultAsync();
+                var employee = await _context.Employee.Where(e => e.EmployeeID == laptop.EmployeeID).FirstOrDefaultAsync(cancellationToken);
 
                 if (employee == null)
                 {
@@ -138,7 +138,7 @@ namespace API_Proj.Features.Request.Laptops
 
                 employee.Laptop = null;
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
 
                 var laptopDTO = _mapper.Map<LaptopDTO>(laptop);
                 return laptopDTO;
