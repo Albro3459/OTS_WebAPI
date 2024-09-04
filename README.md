@@ -17,7 +17,10 @@ Supports Get, Post (Create), Put (Update), and Delete for:
 
 Universal uses SQLite, so with .Net 8 and EF core it should work on anyone's computer
 
-This branch really only works on Visual Studio on Windows because it uses LocalDB
+
+### Other branches only works on Visual Studio on Windows because it uses the built in SQLServer DB
+
+#### How to run on Windows with Visual Studio
 
 You need the .NET 8 sdk to run it
 
