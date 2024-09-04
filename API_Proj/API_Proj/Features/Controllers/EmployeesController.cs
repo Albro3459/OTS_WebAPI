@@ -14,6 +14,8 @@ using System.Security.Cryptography;
 using NuGet.Packaging;
 using MediatR;
 using API_Proj.Features.Request.Employees;
+using API_Proj.Features.Request.Laptops;
+using System.Threading;
 
 namespace API_Proj.Features.Controllers
 {
@@ -48,14 +50,14 @@ namespace API_Proj.Features.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployee(CancellationToken cancellationToken)
         {
-            var employee = await _mediator.Send(new GetEmployee.Query(), cancellationToken);
+            var employees = await _mediator.Send(new GetEmployee.Query(), cancellationToken);
 
-            if (employee.Value != null)
+            if (employees.Value != null)
             {
-                return Ok(employee);
+                return Ok(employees.Value);
             }
 
-            return employee.Result;
+            return employees.Result ?? BadRequest();
         }
 
         // GET: api/Employees/Get/1001
@@ -83,10 +85,10 @@ namespace API_Proj.Features.Controllers
 
             if (employee.Value != null)
             {
-                return Ok(employee);
+                return Ok(employee.Value);
             }
 
-            return employee.Result;
+            return employee.Result ?? BadRequest();
         }
 
 
@@ -154,10 +156,10 @@ namespace API_Proj.Features.Controllers
 
             if (employee.Value != null)
             {
-                return Ok(employee);
+                return Ok(employee.Value);
             }
 
-            return employee.Result;
+            return employee.Result ?? BadRequest();
         }
 
         //POST: api/Employees
@@ -239,37 +241,44 @@ namespace API_Proj.Features.Controllers
 
             if (employee.Value != null)
             {
-                return Ok(employee);
+                return Ok(employee.Value);
             }
 
-            return employee.Result;
+            return employee.Result ?? BadRequest();
         }
 
+        //// DELETE: api/Employees/Delete/5
+        //[HttpDelete("Delete/{id}")]
+        //public async Task<IActionResult> DeleteEmployee(int id)
+        //{
+        //    var employee = await _context.Employee.FindAsync(id);
+        //    if (employee == null || employee.IsDeleted)
+        //    {
+        //        return NotFound("Employee doesn't exist");
+        //    }
+
+
+        //    employee.IsDeleted = true;
+        //    var laptop = await _context.Laptop.Where(l => l.EmployeeID == id).FirstOrDefaultAsync();
+        //    if (laptop != null)
+        //    {
+        //        laptop.Employee = null;
+        //        laptop.EmployeeID = null;
+        //    }
+
+        //    //_context.Update(employee);
+
+
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
         // DELETE: api/Employees/Delete/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
-        {
-            var employee = await _context.Employee.FindAsync(id);
-            if (employee == null || employee.IsDeleted)
-            {
-                return NotFound("Employee doesn't exist");
-            }
+        [HttpDelete("Delete/{employeeID}")]
+        public async Task<IActionResult> DeleteEmployee(int employeeID, CancellationToken cancellationToken) {
+            var result = await _mediator.Send(new DeleteEmployee.Query(employeeID), cancellationToken);
 
-
-            employee.IsDeleted = true;
-            var laptop = await _context.Laptop.Where(l => l.EmployeeID == id).FirstOrDefaultAsync();
-            if (laptop != null)
-            {
-                laptop.Employee = null;
-                laptop.EmployeeID = null;
-            }
-
-            //_context.Update(employee);
-
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return result.Result ?? BadRequest();
         }
 
         private bool EmployeeExists(int id)

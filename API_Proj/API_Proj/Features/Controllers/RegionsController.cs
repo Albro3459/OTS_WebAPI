@@ -14,6 +14,8 @@ using API_Proj.Features.Request.Regions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Drawing;
+using API_Proj.Features.Request.Offices;
+using System.Threading;
 
 namespace API_Proj.Features.Controllers
 {
@@ -52,10 +54,10 @@ namespace API_Proj.Features.Controllers
 
             if (regions.Value != null)
             {
-                return Ok(regions);
+                return Ok(regions.Value);
             }
 
-            return regions.Result;
+            return regions.Result ?? BadRequest();
         }
 
         // GET: api/Regions/1001
@@ -85,10 +87,10 @@ namespace API_Proj.Features.Controllers
 
             if (region.Value != null)
             {
-                return Ok(region);
+                return Ok(region.Value);
             }
 
-            return region.Result;
+            return region.Result ?? BadRequest();
         }
 
 
@@ -140,10 +142,10 @@ namespace API_Proj.Features.Controllers
             var region = await _mediator.Send(new UpdateRegion.Query(_region), cancellationToken);
 
             if (region.Value != null) {
-                return Ok(region);
+                return Ok(region.Value);
             }
 
-            return region.Result;
+            return region.Result ?? BadRequest();
         }
 
         //// POST: api/Regions
@@ -208,40 +210,48 @@ namespace API_Proj.Features.Controllers
 
             if (region.Value != null)
             {
-                return Ok(region);
+                return Ok(region.Value);
             }
 
-            return region.Result;
+            return region.Result ?? BadRequest();
         }
 
 
+        //// DELETE: api/Regions/Delete/5
+        //[HttpDelete("Delete/{id}")]
+        //public async Task<IActionResult> DeleteRegion(int id)
+        //{
+        //    var region = await _context.Region.FindAsync(id);
+        //    if (region == null)
+        //    {
+        //        return NotFound("Region doesn't exist");
+        //    }
+
+        //    region.IsDeleted = true;
+
+        //    var offices = await _context.Office.Where(o => o.RegionID == id).ToListAsync();
+        //    if (offices != null)
+        //    {
+        //        foreach (var o in offices)
+        //        {
+        //            o.Region = null;
+        //            o.RegionID = null;
+        //        }
+        //    }
+
+        //    //_context.Update(region);
+
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
         // DELETE: api/Regions/Delete/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteRegion(int id)
-        {
-            var region = await _context.Region.FindAsync(id);
-            if (region == null)
-            {
-                return NotFound("Region doesn't exist");
-            }
+        [HttpDelete("Delete/{regionID}")]
+        public async Task<IActionResult> DeleteRegion(int regionID, CancellationToken cancellationToken) {
+            var result = await _mediator.Send(new DeleteRegion.Query(regionID), cancellationToken);
 
-            region.IsDeleted = true;
-
-            var offices = await _context.Office.Where(o => o.RegionID == id).ToListAsync();
-            if (offices != null)
-            {
-                foreach (var o in offices)
-                {
-                    o.Region = null;
-                    o.RegionID = null;
-                }
-            }
-
-            //_context.Update(region);
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return result.Result ?? BadRequest();
         }
 
         private bool RegionExists(int id)

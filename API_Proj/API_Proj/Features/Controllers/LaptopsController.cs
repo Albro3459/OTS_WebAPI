@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using System.Drawing;
 using API_Proj.Features.Request.Laptops;
 using MediatR;
+using System.Threading;
 
 namespace API_Proj.Features.Controllers
 {
@@ -38,13 +39,13 @@ namespace API_Proj.Features.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<LaptopDTO>>> GetLaptop(CancellationToken cancellationToken)
         {
-            var laptop = await _mediator.Send(new GetLaptop.Query(), cancellationToken);
+            var laptops = await _mediator.Send(new GetLaptop.Query(), cancellationToken);
 
-            if (laptop.Value != null) {
-                return Ok(laptop);
+            if (laptops.Value != null) {
+                return Ok(laptops.Value);
             }
 
-            return laptop.Result;
+            return laptops.Result ?? BadRequest();
         }
 
 
@@ -71,10 +72,10 @@ namespace API_Proj.Features.Controllers
             var laptop = await _mediator.Send(new GetLaptopByID.Query(id), cancellationToken);
 
             if (laptop.Value != null) {
-                return Ok(laptop);
+                return Ok(laptop.Value);
             }
 
-            return laptop.Result;
+            return laptop.Result ?? BadRequest();
         }
 
 
@@ -131,10 +132,10 @@ namespace API_Proj.Features.Controllers
             var laptop = await _mediator.Send(new UpdateLaptop.Query(_laptop), cancellationToken);
 
             if (laptop.Value != null) {
-                return Ok(laptop);
+                return Ok(laptop.Value);
             }
 
-            return laptop.Result;
+            return laptop.Result ?? BadRequest();
 
         }
 
@@ -176,17 +177,17 @@ namespace API_Proj.Features.Controllers
 
         //}
 
-        //PUT: api/Laptops/Update/{laptopID}/UnassignOwner
-        [HttpPut("Update/{laptopID}/UnassignOwner")]
+        //PUT: api/Laptops/Update/{_laptopID}/UnassignOwner
+        [HttpPut("Update/{_laptopID}/UnassignOwner")]
         public async Task<IActionResult> UnassignOwner(int _laptopID, CancellationToken cancellationToken)
         {
             var laptop = await _mediator.Send(new UnassignOwner.Query(_laptopID), cancellationToken);
 
             if (laptop.Value != null) {
-                return Ok(laptop);
+                return Ok(laptop.Value);
             }
 
-            return laptop.Result;
+            return laptop.Result ?? BadRequest();
 
         }
 
@@ -249,28 +250,37 @@ namespace API_Proj.Features.Controllers
 
             if (laptop.Value != null)
             {
-                return Ok(laptop);
+                return Ok(laptop.Value);
             }
 
-            return laptop.Result;
+            return laptop.Result ?? BadRequest();
         }
 
+        //// DELETE: api/Laptops/Delete/5
+        //[HttpDelete("Delete/{id}")]
+        //public async Task<IActionResult> DeleteLaptop(int id)
+        //{
+        //    var laptop = await _context.Laptop.FindAsync(id);
+        //    if (laptop == null)
+        //    {
+        //        return NotFound("Laptop doesn't exist");
+        //    }
+
+
+        //    laptop.IsDeleted = true;
+        //    _context.Update(laptop);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
         // DELETE: api/Laptops/Delete/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteLaptop(int id)
-        {
-            var laptop = await _context.Laptop.FindAsync(id);
-            if (laptop == null)
-            {
-                return NotFound("Laptop doesn't exist");
-            }
+        [HttpDelete("Delete/{laptopID}")]
+        public async Task<IActionResult> DeleteLaptop(int laptopID, CancellationToken cancellationToken) {
 
+            var result = await _mediator.Send(new DeleteLaptop.Query(laptopID), cancellationToken);
 
-            laptop.IsDeleted = true;
-            _context.Update(laptop);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return result.Result ?? BadRequest();
         }
 
         private bool LaptopExists(int id)

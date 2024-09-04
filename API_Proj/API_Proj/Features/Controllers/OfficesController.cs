@@ -52,10 +52,10 @@ namespace API_Proj.Features.Controllers
 
             if (offices.Value != null)
             {
-                return Ok(offices);
+                return Ok(offices.Value);
             }
 
-            return offices.Result;
+            return offices.Result ?? BadRequest();
         }
 
 
@@ -85,10 +85,10 @@ namespace API_Proj.Features.Controllers
 
             if (office.Value != null)
             {
-                return Ok(office);
+                return Ok(office.Value);
             }
 
-            return office.Result;
+            return office.Result ?? BadRequest();
         }
 
 
@@ -159,10 +159,10 @@ namespace API_Proj.Features.Controllers
 
             if (office.Value != null)
             {
-                return Ok(office);
+                return Ok(office.Value);
             }
 
-            return office.Result;
+            return office.Result ?? BadRequest();
         }
 
         ////PUT: api/Offices/Update/{officeID}/UnassignRegion
@@ -212,18 +212,18 @@ namespace API_Proj.Features.Controllers
 
         //}
 
-        //PUT: api/Offices/Update/{officeID}/UnassignRegion
-        [HttpPut("Update/{officeID}/UnassignRegion")]
+        //PUT: api/Offices/Update/{_officeID}/UnassignRegion
+        [HttpPut("Update/{_officeID}/UnassignRegion")]
         public async Task<IActionResult> UnassignRegion(int _officeID, CancellationToken cancellationToken)
         { 
             var office = await _mediator.Send(new UnassignRegion.Query(_officeID), cancellationToken);
 
             if (office.Value != null)
             {
-                return Ok(office);
+                return Ok(office.Value);
             }
 
-            return office.Result;
+            return office.Result ?? BadRequest();
         }
 
         //// POST: api/Offices
@@ -302,30 +302,36 @@ namespace API_Proj.Features.Controllers
 
             if (office.Value != null)
             {
-                return Ok(office);
+                return Ok(office.Value);
             }
 
-            return office.Result;
+            return office.Result ?? BadRequest();
 
         }
 
 
+        /*
+         * 
+         * var office = await _context.Office.FindAsync(request.laptopID);
+                if (office == null) {
+                    return new NotFoundObjectResult("Office doesn't exist");
+                }
+
+                office.IsDeleted = true;
+                _context.Update(office);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new NoContentResult();
+        */
+
         // DELETE: api/Offices/Delete/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteOffice(int id)
+        [HttpDelete("Delete/{officeID}")]
+        public async Task<IActionResult> DeleteOffice(int officeID, CancellationToken cancellationToken)
         {
-            var office = await _context.Office.FindAsync(id);
-            if (office == null)
-            {
-                return NotFound("Office doesn't exist");
-            }
+            var result = await _mediator.Send(new DeleteOffice.Query(officeID), cancellationToken);
 
-            office.IsDeleted = true;
-            _context.Update(office);
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return result.Result ?? BadRequest();
         }
 
         private bool OfficeExists(int id)
