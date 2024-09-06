@@ -50,11 +50,10 @@ public class RegionsControllerTest {
         //Arrange
         var expectedDTO = _fixture.Create<ActionResult<RegionDTO>>();
         var mockCancellationToken = CancellationToken.None;
-        int id = 1001;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetRegionByID.Query>(), default)).ReturnsAsync(expectedDTO);
-        var DTOResult = await _regionsController.GetRegionByID(id, mockCancellationToken);
+        var DTOResult = await _regionsController.GetRegionByID(expectedDTO.Value.RegionID, mockCancellationToken);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<RegionDTO>>(DTOResult);

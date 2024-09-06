@@ -49,11 +49,10 @@ public class EmployeesControllerTest {
         //Arrange
         var expectedDTO = _fixture.Create<ActionResult<EmployeeDTO>>();
         var mockCancellationToken = CancellationToken.None;
-        int id = 1001;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetEmployeeByID.Query>(), default)).ReturnsAsync(expectedDTO);
-        var DTOResult = await _employeesController.GetEmployeeByID(id, mockCancellationToken);
+        var DTOResult = await _employeesController.GetEmployeeByID(expectedDTO.Value.EmployeeID, mockCancellationToken);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<EmployeeDTO>>(DTOResult);

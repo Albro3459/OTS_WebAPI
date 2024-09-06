@@ -50,11 +50,10 @@ public class LaptopsControllerTest {
         //Arrange
         var expectedDTO = _fixture.Create<ActionResult<LaptopDTO>>();
         var mockCancellationToken = CancellationToken.None;
-        int id = 1001;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetLaptopByID.Query>(), default)).ReturnsAsync(expectedDTO);
-        var DTOResult = await _laptopsController.GetLaptopByID(id, mockCancellationToken);
+        var DTOResult = await _laptopsController.GetLaptopByID(expectedDTO.Value.LaptopID, mockCancellationToken);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<LaptopDTO>>(DTOResult);

@@ -50,11 +50,10 @@ public class OfficesControllerTest {
         //Arrange
         var expectedDTO = _fixture.Create<ActionResult<OfficeDTO>>();
         var mockCancellationToken = CancellationToken.None;
-        int id = 1001;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetOfficeByID.Query>(), default)).ReturnsAsync(expectedDTO);
-        var DTOResult = await _officesController.GetOfficeByID(id, mockCancellationToken);
+        var DTOResult = await _officesController.GetOfficeByID(expectedDTO.Value.OfficeID, mockCancellationToken);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<OfficeDTO>>(DTOResult);
