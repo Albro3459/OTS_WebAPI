@@ -12,20 +12,71 @@ using MediatR;
 using API_Proj.Features.Controllers;
 using AutoFixture;
 using Moq;
+using API_Proj.Features.Request.Regions;
+using API_Proj.Features.Request.Offices;
 
 namespace API_Proj.Test.Features.Controllers;
-internal class RegionsControllerTest {
+
+[TestClass]
+public class RegionsControllerTest {
 
     private RegionsController _regionsController;
-    private readonly IMapper _mapper;
     private Mock<IMediator> _mediatorMock;
     private Fixture _fixture;
 
-    public RegionsControllerTest(IMapper mapper) {
+    public RegionsControllerTest() {
         _fixture = new Fixture();
         _mediatorMock = new Mock<IMediator>();
-        _mapper = mapper;
-        _regionsController = new RegionsController(_mapper, _mediatorMock.Object);
+        _regionsController = new RegionsController(_mediatorMock.Object);
 
     }
+
+    [TestMethod]
+    public async Task GetRegion_ShouldReturnRegionDTOs() {
+        //Arrange
+        var expectedDTOs = _fixture.Create<ActionResult<IEnumerable<RegionDTO>>>();
+        var mockCancellationToken = CancellationToken.None;
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<GetRegion.Query>(), default)).ReturnsAsync(expectedDTOs);
+        var DTOResult = await _regionsController.GetRegion(mockCancellationToken);
+
+        //Assert
+        Assert.IsInstanceOfType<ActionResult<IEnumerable<RegionDTO>>>(DTOResult);
+    }
+
+    [TestMethod]
+    public async Task GetRegionByID_Valid_ShouldReturnRegionDTO() {
+        //Arrange
+        var expectedDTO = _fixture.Create<ActionResult<RegionDTO>>();
+        var mockCancellationToken = CancellationToken.None;
+        int id = 1001;
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<GetRegionByID.Query>(), default)).ReturnsAsync(expectedDTO);
+        var DTOResult = await _regionsController.GetRegionByID(id, mockCancellationToken);
+
+        //Assert
+        Assert.IsInstanceOfType<ActionResult<RegionDTO>>(DTOResult);
+    }
+
+    [TestMethod]
+    public async Task GetRegionByID_InValid_ShouldReturnRegionDTO() {
+        //Arrange
+        var expectedResultMessage = new NotFoundObjectResult("Region not found");
+        var mockCancellationToken = CancellationToken.None;
+        int id = 0;
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<GetRegionByID.Query>(), default)).ReturnsAsync(expectedResultMessage);
+        var DTOResult = await _regionsController.GetRegionByID(id, mockCancellationToken);
+
+        //Assert
+        Assert.IsInstanceOfType<NotFoundObjectResult>(DTOResult.Result);
+
+        var notFoundResult = DTOResult.Result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(expectedResultMessage.Value, notFoundResult.Value);
+    }
+
 }

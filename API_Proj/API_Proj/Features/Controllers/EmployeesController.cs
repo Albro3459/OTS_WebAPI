@@ -24,13 +24,13 @@ namespace API_Proj.Features.Controllers
     public class EmployeesController : ControllerBase
     {
         //private readonly ApiDbContext _context;
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public EmployeesController(/*ApiDbContext context,*/ IMapper mapper, IMediator mediator)
+        public EmployeesController(/*ApiDbContext context, IMapper mapper,*/ IMediator mediator)
         {
             //_context = context;
-            _mapper = mapper;
+            //_mapper = mapper;
             _mediator = mediator;
         }
 

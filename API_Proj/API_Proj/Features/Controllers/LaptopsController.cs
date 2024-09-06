@@ -25,13 +25,13 @@ namespace API_Proj.Features.Controllers
     public class LaptopsController : ControllerBase
     {
         //private readonly ApiDbContext _context;
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public LaptopsController(/*ApiDbContext context,*/ IMapper mapper, IMediator mediator)
+        public LaptopsController(/*ApiDbContext context, IMapper mapper,*/ IMediator mediator)
         {
             //_context = context;
-            _mapper = mapper;
+            //_mapper = mapper;
             _mediator = mediator;
         }
 
