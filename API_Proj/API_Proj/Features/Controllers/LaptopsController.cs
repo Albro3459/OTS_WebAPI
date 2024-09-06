@@ -24,15 +24,15 @@ namespace API_Proj.Features.Controllers
     [ApiController]
     public class LaptopsController : ControllerBase
     {
-        private readonly ApiDbContext _context;
-        private readonly IMediator _mediator;
+        //private readonly ApiDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public LaptopsController(ApiDbContext context, IMediator mediator, IMapper mapper)
+        public LaptopsController(/*ApiDbContext context,*/ IMapper mapper, IMediator mediator)
         {
-            _context = context;
-            _mediator = mediator;
+            //_context = context;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         // GET: api/Laptops/Get
@@ -177,11 +177,11 @@ namespace API_Proj.Features.Controllers
 
         //}
 
-        //PUT: api/Laptops/Update/{_laptopID}/UnassignOwner
-        [HttpPut("Update/{_laptopID}/UnassignOwner")]
-        public async Task<IActionResult> UnassignOwner(int _laptopID, CancellationToken cancellationToken)
+        //PUT: api/Laptops/Update/{_laptopID}/UnassignLaptopOwner
+        [HttpPut("Update/{_laptopID}/UnassignLaptopOwner")]
+        public async Task<IActionResult> UnassignLaptopOwner(int _laptopID, CancellationToken cancellationToken)
         {
-            var laptop = await _mediator.Send(new UnassignOwner.Query(_laptopID), cancellationToken);
+            var laptop = await _mediator.Send(new UnassignLaptopOwner.Query(_laptopID), cancellationToken);
 
             if (laptop.Value != null) {
                 return Ok(laptop.Value);
@@ -283,9 +283,9 @@ namespace API_Proj.Features.Controllers
             return result.Result ?? BadRequest();
         }
 
-        private bool LaptopExists(int id)
-        {
-            return _context.Laptop.Any(e => e.LaptopID == id);
-        }
+        //private bool LaptopExists(int id)
+        //{
+        //    return _context.Laptop.Any(e => e.LaptopID == id);
+        //}
     }
 }

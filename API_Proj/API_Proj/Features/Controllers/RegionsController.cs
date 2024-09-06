@@ -23,13 +23,13 @@ namespace API_Proj.Features.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-        private readonly ApiDbContext _context;
+        //private readonly ApiDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public RegionsController(ApiDbContext context, IMapper mapper, IMediator mediator)
+        public RegionsController(/*ApiDbContext context,*/ IMapper mapper, IMediator mediator)
         {
-            _context = context;
+            //_context = context;
             _mapper = mapper;
             _mediator = mediator;
         }
@@ -254,9 +254,9 @@ namespace API_Proj.Features.Controllers
             return result.Result ?? BadRequest();
         }
 
-        private bool RegionExists(int id)
-        {
-            return _context.Region.Any(e => e.RegionID == id);
-        }
+        //private bool RegionExists(int id)
+        //{
+        //    return _context.Region.Any(e => e.RegionID == id);
+        //}
     }
 }

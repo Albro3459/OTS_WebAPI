@@ -21,13 +21,13 @@ namespace API_Proj.Features.Controllers
     [ApiController]
     public class OfficesController : ControllerBase
     {
-        private readonly ApiDbContext _context;
+        //private readonly ApiDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public OfficesController(ApiDbContext context, IMapper mapper, IMediator mediator)
+        public OfficesController(/*ApiDbContext context,*/ IMapper mapper, IMediator mediator)
         {
-            _context = context;
+            //_context = context;
             _mapper = mapper;
             _mediator = mediator;
         }
@@ -212,11 +212,11 @@ namespace API_Proj.Features.Controllers
 
         //}
 
-        //PUT: api/Offices/Update/{_officeID}/UnassignRegion
-        [HttpPut("Update/{_officeID}/UnassignRegion")]
-        public async Task<IActionResult> UnassignRegion(int _officeID, CancellationToken cancellationToken)
+        //PUT: api/Offices/Update/{_officeID}/UnassignOfficeRegion
+        [HttpPut("Update/{_officeID}/UnassignOfficeRegion")]
+        public async Task<IActionResult> UnassignOfficeRegion(int _officeID, CancellationToken cancellationToken)
         { 
-            var office = await _mediator.Send(new UnassignRegion.Query(_officeID), cancellationToken);
+            var office = await _mediator.Send(new UnassignOfficeRegion.Query(_officeID), cancellationToken);
 
             if (office.Value != null)
             {
@@ -334,9 +334,9 @@ namespace API_Proj.Features.Controllers
             return result.Result ?? BadRequest();
         }
 
-        private bool OfficeExists(int id)
-        {
-            return _context.Office.Any(e => e.OfficeID == id);
-        }
+        //private bool OfficeExists(int id)
+        //{
+        //    return _context.Office.Any(e => e.OfficeID == id);
+        //}
     }
 }
