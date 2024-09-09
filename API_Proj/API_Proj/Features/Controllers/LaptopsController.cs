@@ -241,11 +241,6 @@ namespace API_Proj.Features.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<LaptopDTO>> CreateLaptop([FromBody] LaptopForCreationDTO _laptop, CancellationToken cancellationToken)
         {
-            if (_laptop == null)
-            {
-                return NotFound("Laptop can't be null");
-            }
-
             var laptop = await _mediator.Send(new CreateLaptop.Query(_laptop), cancellationToken);
 
             if (laptop.Value != null)

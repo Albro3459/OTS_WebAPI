@@ -14,6 +14,7 @@ using MediatR;
 using API_Proj.Features.Controllers;
 using Moq;
 using AutoFixture;
+using Microsoft.AspNetCore.Routing;
 
 namespace API_Proj.Test.Features.Controllers;
 
@@ -30,16 +31,15 @@ public class LaptopsControllerTest {
         _laptopsController = new LaptopsController(_mediatorMock.Object);
 
     }
-
+    //GET Tests:
     [TestMethod]
     public async Task GetLaptop_ShouldReturnLaptopDTOs() {
         //Arrange
         var expectedDTOs = _fixture.Create<ActionResult<IEnumerable<LaptopDTO>>>();
-        var mockCancellationToken = CancellationToken.None;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetLaptop.Query>(), default)).ReturnsAsync(expectedDTOs);
-        var DTOResult = await _laptopsController.GetLaptop(mockCancellationToken);
+        var DTOResult = await _laptopsController.GetLaptop(default);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<IEnumerable<LaptopDTO>>>(DTOResult);
@@ -49,26 +49,24 @@ public class LaptopsControllerTest {
     public async Task GetLaptopByID_Valid_ShouldReturnLaptopDTO() {
         //Arrange
         var expectedDTO = _fixture.Create<ActionResult<LaptopDTO>>();
-        var mockCancellationToken = CancellationToken.None;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetLaptopByID.Query>(), default)).ReturnsAsync(expectedDTO);
-        var DTOResult = await _laptopsController.GetLaptopByID(expectedDTO.Value.LaptopID, mockCancellationToken);
+        var DTOResult = await _laptopsController.GetLaptopByID(expectedDTO.Value.LaptopID, default);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<LaptopDTO>>(DTOResult);
     }
 
     [TestMethod]
-    public async Task GetLaptopByID_InValid_ShouldReturnLaptopDTO() {
+    public async Task GetLaptopByID_InValid_ShouldReturnNotFound() {
         //Arrange
         var expectedResultMessage = new NotFoundObjectResult("Laptop not found");
-        var mockCancellationToken = CancellationToken.None;
         int id = 0;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetLaptopByID.Query>(), default)).ReturnsAsync(expectedResultMessage);
-        var DTOResult = await _laptopsController.GetLaptopByID(id, mockCancellationToken);
+        var DTOResult = await _laptopsController.GetLaptopByID(id, default);
 
         //Assert
         Assert.IsInstanceOfType<NotFoundObjectResult>(DTOResult.Result);
@@ -76,5 +74,37 @@ public class LaptopsControllerTest {
         var notFoundResult = DTOResult.Result as NotFoundObjectResult;
         Assert.IsNotNull(notFoundResult);
         Assert.AreEqual(expectedResultMessage.Value, notFoundResult.Value);
+    }
+
+    // CREATE Tests:
+    [TestMethod]
+    public async Task CreateLaptop_Valid_ShouldReturnLaptopDTO() {
+        //Arrange
+        var dtoToCreate = _fixture.Create<LaptopForCreationDTO>();
+        var expectedDTO = _fixture.Create<LaptopDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<CreateLaptop.Query>(), default)).ReturnsAsync(expectedDTO);
+        var DTOResult = await _laptopsController.CreateLaptop(dtoToCreate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<ActionResult<LaptopDTO>>(DTOResult);
+    }
+
+    [TestMethod]
+    public async Task CreateLaptop_InValid_ShouldReturnNotFound() {
+        //Arrange
+        var expectedResultMessage = new BadRequestObjectResult("Laptop can't be null");
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<CreateLaptop.Query>(), default)).ReturnsAsync(expectedResultMessage);
+        var DTOResult = await _laptopsController.CreateLaptop(null, default);
+
+        //Assert
+        Assert.IsInstanceOfType<BadRequestObjectResult>(DTOResult.Result);
+
+        var badRequestResult = DTOResult.Result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequestResult);
+        Assert.AreEqual(expectedResultMessage.Value, badRequestResult.Value);
     }
 }

@@ -30,15 +30,15 @@ public class EmployeesControllerTest {
         _employeesController = new EmployeesController(_mediatorMock.Object);
     }
 
+    // GET Tests:
     [TestMethod]
     public async Task GetEmployee_ShouldReturnEmployeeDTOs() {
         //Arrange
         var expectedDTOs = _fixture.Create<ActionResult<IEnumerable<EmployeeDTO>>>();
-        var mockCancellationToken = CancellationToken.None;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetEmployee.Query>(), default)).ReturnsAsync(expectedDTOs);
-        var DTOResult = await _employeesController.GetEmployee(mockCancellationToken);
+        var DTOResult = await _employeesController.GetEmployee(default);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<IEnumerable<EmployeeDTO>>>(DTOResult);
@@ -48,26 +48,24 @@ public class EmployeesControllerTest {
     public async Task GetEmployeeByID_Valid_ShouldReturnEmployeeDTO() {
         //Arrange
         var expectedDTO = _fixture.Create<ActionResult<EmployeeDTO>>();
-        var mockCancellationToken = CancellationToken.None;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetEmployeeByID.Query>(), default)).ReturnsAsync(expectedDTO);
-        var DTOResult = await _employeesController.GetEmployeeByID(expectedDTO.Value.EmployeeID, mockCancellationToken);
+        var DTOResult = await _employeesController.GetEmployeeByID(expectedDTO.Value.EmployeeID, default);
 
         //Assert
         Assert.IsInstanceOfType<ActionResult<EmployeeDTO>>(DTOResult);
     }
 
     [TestMethod]
-    public async Task GetEmployeeByID_InValid_ShouldReturnEmployeeDTO() {
+    public async Task GetEmployeeByID_InValid_ShouldReturnNotFound() {
         //Arrange
         var expectedResultMessage = new NotFoundObjectResult("Employee not found");
-        var mockCancellationToken = CancellationToken.None;
         int id = 0;
 
         //Act
         _mediatorMock.Setup(x => x.Send(It.IsAny<GetEmployeeByID.Query>(), default)).ReturnsAsync(expectedResultMessage);
-        var DTOResult = await _employeesController.GetEmployeeByID(id, mockCancellationToken);
+        var DTOResult = await _employeesController.GetEmployeeByID(id, default);
 
         //Assert
         Assert.IsInstanceOfType<NotFoundObjectResult>(DTOResult.Result);
@@ -75,6 +73,39 @@ public class EmployeesControllerTest {
         var notFoundResult = DTOResult.Result as NotFoundObjectResult;
         Assert.IsNotNull(notFoundResult);
         Assert.AreEqual(expectedResultMessage.Value, notFoundResult.Value);
+    }
+
+
+    // CREATE Tests:
+    [TestMethod]
+    public async Task CreateEmployee_Valid_ShouldReturnEmployeeDTO() {
+        //Arrange
+        var dtoToCreate = _fixture.Create<EmployeeForCreationDTO>();
+        var expectedDTO = _fixture.Create<EmployeeDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<CreateEmployee.Query>(), default)).ReturnsAsync(expectedDTO);
+        var DTOResult = await _employeesController.CreateEmployee(dtoToCreate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<ActionResult<EmployeeDTO>>(DTOResult);
+    }
+
+    [TestMethod]
+    public async Task CreateEmployee_InValid_ShouldReturnNotFound() {
+        //Arrange
+        var expectedResultMessage = new BadRequestObjectResult("Employee can't be null");
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<CreateEmployee.Query>(), default)).ReturnsAsync(expectedResultMessage);
+        var DTOResult = await _employeesController.CreateEmployee(null, default);
+
+        //Assert
+        Assert.IsInstanceOfType<BadRequestObjectResult>(DTOResult.Result);
+
+        var badRequestResult = DTOResult.Result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequestResult);
+        Assert.AreEqual(expectedResultMessage.Value, badRequestResult.Value);
     }
 
 }
