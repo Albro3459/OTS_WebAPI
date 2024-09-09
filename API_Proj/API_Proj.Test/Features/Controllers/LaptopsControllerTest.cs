@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Mvc;
-using API_Proj.Infastructure;
-using AutoMapper;
-using API_Proj.Features;
+﻿using Microsoft.AspNetCore.Mvc;
+using API_Proj.Domain.Entity;
 using API_Proj.Features.DTO;
 using API_Proj.Features.Request.Laptops;
 using MediatR;
 using API_Proj.Features.Controllers;
 using Moq;
 using AutoFixture;
-using Microsoft.AspNetCore.Routing;
 
 namespace API_Proj.Test.Features.Controllers;
 
@@ -179,5 +170,42 @@ public class LaptopsControllerTest {
         var badRequestResult = DTOResult.Result as BadRequestObjectResult;
         Assert.IsNotNull(badRequestResult);
         Assert.AreEqual(expectedResultMessage.Value, badRequestResult.Value);
+    }
+
+    // DELETE Tests:
+    [TestMethod]
+    public async Task DeleteLaptop_Valid_ShouldReturnNoContent() {
+        //Arrange
+        var expectedResultDTO = _fixture.Build<Laptop>()
+                                .Without(l => l.Employee)
+                                .Create();
+        var expectedResultMessage = new NoContentResult();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<DeleteLaptop.Query>(), default)).ReturnsAsync(expectedResultMessage);
+        var result = await _laptopsController.DeleteLaptop(expectedResultDTO.LaptopID, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(result);
+        var noContentResult = result as NoContentResult;
+        Assert.IsNotNull(noContentResult);
+        Assert.AreEqual(noContentResult.StatusCode, expectedResultMessage.StatusCode);
+    }
+
+    [TestMethod]
+    public async Task DeleteLaptop_InValid_ShouldReturnNotFound() {
+        //Arrange
+        var expectedResultMessage = new NotFoundObjectResult("Laptop doesn't exist");
+        var inValidID = 0;
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<DeleteLaptop.Query>(), default)).ReturnsAsync(expectedResultMessage);
+        var result = await _laptopsController.DeleteLaptop(inValidID, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(result);
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(notFoundResult.Value, expectedResultMessage.Value);
     }
 }
