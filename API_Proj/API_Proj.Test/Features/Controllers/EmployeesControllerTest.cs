@@ -75,6 +75,41 @@ public class EmployeesControllerTest {
         Assert.AreEqual(expectedResultMessage.Value, notFoundResult.Value);
     }
 
+    // UPDATE Tests:
+    [TestMethod]
+    public async Task UpdateEmployee_Valid_ShouldReturnOk() {
+        //Arrange
+        var expectedResultDTO = _fixture.Create<EmployeeDTO>();
+        var expectedResult = new OkObjectResult(expectedResultDTO);
+        var dtoToUpdate = _fixture.Create<EmployeeDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<UpdateEmployee.Query>(), default)).ReturnsAsync(expectedResult);
+        var DTOResult = await _employeesController.UpdateEmployee(dtoToUpdate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(DTOResult);
+        var okResult = DTOResult as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(expectedResult.Value, okResult.Value);
+    }
+
+    [TestMethod]
+    public async Task UpdateEmployee_InValid_ShouldReturnBadRequest() {
+        //Arrange
+        var expectedResult = new BadRequestObjectResult("Employee can't be null");
+        var dtoToUpdate = _fixture.Create<EmployeeDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<UpdateEmployee.Query>(), default)).ReturnsAsync(expectedResult);
+        var DTOResult = await _employeesController.UpdateEmployee(dtoToUpdate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(DTOResult);
+        var badRequestResult = DTOResult as BadRequestObjectResult;
+        Assert.IsNotNull(badRequestResult);
+        Assert.AreEqual(expectedResult.Value, badRequestResult.Value);
+    }
 
     // CREATE Tests:
     [TestMethod]
@@ -92,7 +127,7 @@ public class EmployeesControllerTest {
     }
 
     [TestMethod]
-    public async Task CreateEmployee_InValid_ShouldReturnNotFound() {
+    public async Task CreateEmployee_InValid_ShouldReturnBadRequest() {
         //Arrange
         var expectedResultMessage = new BadRequestObjectResult("Employee can't be null");
 

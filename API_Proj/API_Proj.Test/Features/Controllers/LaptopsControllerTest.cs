@@ -76,6 +76,79 @@ public class LaptopsControllerTest {
         Assert.AreEqual(expectedResultMessage.Value, notFoundResult.Value);
     }
 
+    // UPDATE Tests:
+    [TestMethod]
+    public async Task UpdateLaptop_Valid_ShouldReturnOk() {
+        //Arrange
+        var expectedResultDTO = _fixture.Create<LaptopDTO>();
+        var expectedResult = new OkObjectResult(expectedResultDTO);
+        var dtoToUpdate = _fixture.Create<LaptopDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<UpdateLaptop.Query>(), default)).ReturnsAsync(expectedResult);
+        var DTOResult = await _laptopsController.UpdateLaptop(dtoToUpdate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(DTOResult);
+        var okResult = DTOResult as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(expectedResult.Value, okResult.Value);
+    }
+
+    [TestMethod]
+    public async Task UpdateLaptop_InValid_ShouldReturnBadRequest() {
+        //Arrange
+        var expectedResult = new BadRequestObjectResult("Laptop can't be null");
+        var dtoToUpdate = _fixture.Create<LaptopDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<UpdateLaptop.Query>(), default)).ReturnsAsync(expectedResult);
+        var DTOResult = await _laptopsController.UpdateLaptop(dtoToUpdate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(DTOResult);
+        var badRequestResult = DTOResult as BadRequestObjectResult;
+        Assert.IsNotNull(badRequestResult);
+        Assert.AreEqual(expectedResult.Value, badRequestResult.Value);
+    }
+
+    [TestMethod]
+    public async Task UnassignLaptopOwner_Valid_ShouldReturnOk() {
+        //Arrange
+        var expectedResultDTO = _fixture.Create<LaptopDTO>();
+        var expectedResult = new OkObjectResult(expectedResultDTO);
+        var dtoToUpdate = _fixture.Create<LaptopDTO>();
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<UnassignLaptopOwner.Query>(), default)).ReturnsAsync(expectedResult);
+        var DTOResult = await _laptopsController.UnassignLaptopOwner(dtoToUpdate.LaptopID, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(DTOResult);
+        var okResult = DTOResult as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(expectedResult.Value, okResult.Value);
+    }
+
+    [TestMethod]
+    public async Task UnassignLaptopOwner_InValid_ShouldReturnNotFound() {
+        //Arrange
+        var expectedResult = new NotFoundObjectResult("Laptop doesn't exist");
+        var idToUpdate = 0;
+
+        //Act
+        _mediatorMock.Setup(x => x.Send(It.IsAny<UnassignLaptopOwner.Query>(), default)).ReturnsAsync(expectedResult);
+        var DTOResult = await _laptopsController.UnassignLaptopOwner(idToUpdate, default);
+
+        //Assert
+        Assert.IsInstanceOfType<IActionResult>(DTOResult);
+        var notFoundResult = DTOResult as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(expectedResult.Value, notFoundResult.Value);
+    }
+
+
+
     // CREATE Tests:
     [TestMethod]
     public async Task CreateLaptop_Valid_ShouldReturnLaptopDTO() {
@@ -92,7 +165,7 @@ public class LaptopsControllerTest {
     }
 
     [TestMethod]
-    public async Task CreateLaptop_InValid_ShouldReturnNotFound() {
+    public async Task CreateLaptop_InValid_ShouldReturnBadRequest() {
         //Arrange
         var expectedResultMessage = new BadRequestObjectResult("Laptop can't be null");
 
