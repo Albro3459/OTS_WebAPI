@@ -29,7 +29,7 @@ namespace API_Proj.Features.Request.Employees {
             public async Task<ActionResult<EmployeeDTO>> Handle(Query request, CancellationToken cancellationToken) {
                 var employee = await _context.Employee
                     .Include(e => e.Offices)
-                .Include(e => e.Laptop)
+                    .Include(e => e.Laptop)
                     .Where(e => e.EmployeeID == request._id)
                     .Select(e => _mapper.Map<EmployeeDTO>(e))
                     .SingleOrDefaultAsync(cancellationToken);
