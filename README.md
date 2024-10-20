@@ -15,8 +15,6 @@ Supports Get, Post (Create), Put (Update), and Delete for:
 ### How to Run:
 I have only tested on VScode
 
-I use the SQLtools extension with SQLtools SQLite extension, but I don't think that is needed
-
 You need the .NET 8 sdk and EF Core installed in your cli to run it 
 
 - Clone the proj

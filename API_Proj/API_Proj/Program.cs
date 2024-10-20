@@ -26,6 +26,9 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
 
 builder.Services.AddControllers();
 
+//builder.Services.AddMediatR(typeof(Program).Assembly);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
