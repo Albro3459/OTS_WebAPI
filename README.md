@@ -13,7 +13,7 @@ Supports Get, Post (Create), Put (Update), and Delete for:
 
 
 ## How to Run:
-### Use the "universal" branch!!
+### Use the ["universal"](https://github.com/Albro3459/OTS_WebAPI/tree/universal) branch!!
 
 Universal uses SQLite, so with .Net 8 and EF core it should work on anyone's computer
 
